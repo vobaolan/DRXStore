@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply h-full bg-[#F4F6F9] dark:bg-slate-900 text-[#212529] dark:text-white antialiased font-sans transition-colors duration-300;
+  }
+}
+
+/* KiotViet Style - Clean Light Panels & Containers */
+.retail-panel {
+  @apply bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors duration-300;
+}
+
+.retail-sidebar {
+  @apply border-r border-slate-200 dark:border-slate-700 transition-colors duration-300;
+}
+
+.retail-header {
+  @apply border-b border-slate-200 dark:border-slate-700 transition-colors duration-300;
+}
+
+/* Custom Scrollbar for modern look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F4F6F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0052FF;
+}
