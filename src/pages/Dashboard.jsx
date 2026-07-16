@@ -79,7 +79,7 @@ const Dashboard = () => {
   const recentActivities = orders.slice(0, 10).map(o => ({
     id: o.id,
     user: o.staffName || 'Admin',
-    action: 'bán đơn hàng',
+    customer: o.customer || 'Khách lẻ',
     amount: formatPrice(o.total - o.discount) + ' ₫',
     time: o.date,
     type: 'sell'
@@ -306,7 +306,7 @@ const Dashboard = () => {
                 <div>
                   <p className="text-[13px] text-slate-600 dark:text-slate-300 leading-snug">
                     <span className="font-bold text-[#0052FF] dark:text-[#6699ff] cursor-pointer hover:underline">{act.user}</span>{' '}
-                    vừa <span className="font-bold text-[#0052FF] dark:text-[#6699ff] cursor-pointer hover:underline">{act.action}</span>{' '}
+                    vừa bán cho <span className="font-bold text-[#0052FF] dark:text-[#6699ff]">{act.customer}</span>{' '}
                     với giá trị <span className="font-bold text-slate-800 dark:text-white">{act.amount}</span>
                   </p>
                   <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{act.time}</p>
