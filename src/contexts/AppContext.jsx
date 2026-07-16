@@ -63,14 +63,22 @@ export const AppProvider = ({ children }) => {
 
   const apiPut = async (url, id, data) => {
     const fetchUrl = isSupabase ? `${url}?id=eq.${id}` : `${url}/${id}`;
+    const payload = { ...data };
+    if (isSupabase) {
+      delete payload.id;
+    }
     const response = await fetch(fetchUrl, {
       method: isSupabase ? 'PATCH' : 'PUT',
       headers: { ...getHeaders(), ...(isSupabase ? { 'Prefer': 'return=representation' } : {}) },
-      body: JSON.stringify(data)
+      body: JSON.stringify(payload)
     });
     if (!response.ok) throw new Error('Lỗi cập nhật');
     const resData = await response.json();
-    return isSupabase ? resData[0] : resData;
+    const result = isSupabase ? resData[0] : resData;
+    if (isSupabase && result && !result.id) {
+      result.id = id;
+    }
+    return result;
   };
 
   const apiDelete = async (url, id) => {
