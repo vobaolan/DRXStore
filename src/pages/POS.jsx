@@ -117,6 +117,7 @@ const POS = () => {
       date: new Date().toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
       customerId: selectedCustomerId,
       customer: customers.find(c => String(c.id) === String(selectedCustomerId))?.name || 'Khách lẻ',
+      customerCode: customers.find(c => String(c.id) === String(selectedCustomerId))?.code || 'KL',
       staffName: activeUser ? activeUser.name : 'Admin',
       total: total,
       discount: discountVal,

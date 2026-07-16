@@ -58,7 +58,7 @@ const Orders = () => {
                       {o.code || o.id}
                     </td>
                     <td className="p-4 text-slate-500 dark:text-slate-400 font-medium">{o.date}</td>
-                    <td className="p-4 font-mono font-bold text-slate-500 dark:text-slate-400">{o.customerCode}</td>
+                    <td className="p-4 font-mono font-bold text-slate-500 dark:text-slate-400">{o.customerCode || 'KL'}</td>
                     <td className="p-4 font-semibold text-slate-700 dark:text-slate-300">{o.customer}</td>
                     <td className="p-4 font-bold text-slate-800 dark:text-slate-200 text-right">{formatPrice(o.total)}</td>
                     <td className="p-4 font-semibold text-rose-500 dark:text-rose-400 text-right">
