@@ -142,10 +142,13 @@ export const AppProvider = ({ children }) => {
     setActiveUser(null);
   };
 
-  // --- USERS API ---
   const addUser = async (newUser) => {
     try {
-      const created = await apiPost(API_USERS, newUser);
+      const payload = { ...newUser };
+      if (isSupabase) {
+        delete payload.id;
+      }
+      const created = await apiPost(API_USERS, payload);
       setUsers(prev => [...prev, created]);
     } catch (error) { console.error('Lỗi tạo user:', error); }
   };
