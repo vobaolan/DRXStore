@@ -367,8 +367,7 @@ const AdminLayout = () => {
           </div>
           
           {/* Footer Hệ thống chứa bản quyền & Logo Ngang (Hình 3) */}
-          <footer className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-wider w-full text-center sm:text-left">
-            <span>© 2026 ODS Team. All rights reserved.</span>
+          <footer className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col items-center sm:items-start gap-3 text-[11px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-wider w-full text-center sm:text-left">
             <div className={`transition-opacity duration-300 ${isDarkMode ? 'opacity-80 hover:opacity-100' : 'opacity-30 hover:opacity-60'}`}>
               <img 
                 src={isDarkMode ? "/assets/logo-ods-horizontal-white.png" : "/assets/logo-ods-horizontal-black.png"} 
@@ -377,6 +376,7 @@ const AdminLayout = () => {
                 style={{ filter: isDarkMode ? 'contrast(300%)' : 'none' }}
               />
             </div>
+            <span>© 2026 ODS Team. All rights reserved.</span>
           </footer>
         </main>
       </div>
