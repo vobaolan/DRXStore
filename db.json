@@ -2,9 +2,9 @@
   "users": [
     {
       "id": 1,
-      "name": "DRX Admin",
+      "name": "ODS Admin",
       "department": "Admin",
-      "email": "admin@drxstore.vn",
+      "email": "admin@odsstore.vn",
       "password": "01699224729",
       "isActive": true,
       "permissions": {
@@ -23,7 +23,7 @@
       "id": 2,
       "name": "Võ Quốc Phi",
       "department": "Bán hàng",
-      "email": "vqphi@drxstore.vn",
+      "email": "vqphi@odsstore.vn",
       "password": "123",
       "isActive": true,
       "permissions": {
@@ -43,7 +43,7 @@
       "id": 3,
       "name": "Võ Thành Đạt",
       "department": "Bán hàng",
-      "email": "vtdat@drxstore.vn",
+      "email": "vtdat@odsstore.vn",
       "password": "123",
       "avatar": "",
       "isActive": true,
