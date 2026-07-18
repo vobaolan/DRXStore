@@ -24,6 +24,7 @@ import {
 import DrxLogo from './DrxLogo';
 import { AppContext, secureStorage } from '../contexts/AppContext';
 import { useContext } from 'react';
+import { AIChatbot } from './AIChatbot';
 
 const DateTimeDisplay = () => {
   const [time, setTime] = useState(new Date());
@@ -431,6 +432,9 @@ const AdminLayout = () => {
           {pwdAlert}
         </div>
       )}
+
+      {/* TRỢ LÝ HƯỚNG DẪN SỬ DỤNG HỆ THỐNG */}
+      <AIChatbot />
 
     </div>
   );
