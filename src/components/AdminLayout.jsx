@@ -374,7 +374,7 @@ const AdminLayout = () => {
               <img 
                 src="/assets/logo-ods-horizontal.png" 
                 alt="ODS Brand Logo (Horizontal - Hình 3)" 
-                className="h-6 object-contain transition-all duration-300"
+                className="h-11 object-contain transition-all duration-300"
                 style={{ filter: isDarkMode ? 'brightness(0) invert(1)' : 'none' }}
               />
             </div>

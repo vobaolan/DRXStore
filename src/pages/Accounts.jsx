@@ -42,6 +42,8 @@ const Accounts = () => {
     avatar: ''
   });
   const [addEmailError, setAddEmailError] = useState('');
+  const [addEmailUsername, setAddEmailUsername] = useState('');
+  const [editEmailUsername, setEditEmailUsername] = useState('');
 
   // States quản lý dữ liệu Edit/RBAC Form
   const [editForm, setEditForm] = useState({
@@ -88,6 +90,7 @@ const Accounts = () => {
   // Mở modal thêm mới
   const openAddModal = () => {
     setAddForm({ name: '', department: 'Bán hàng', email: '', password: '', avatar: '' });
+    setAddEmailUsername('');
     setAddEmailError('');
     setIsAddModalOpen(true);
   };
@@ -161,6 +164,7 @@ const Accounts = () => {
       avatar: staff.avatar || '',
       permissions: { ...staff.permissions }
     });
+    setEditEmailUsername(staff.email ? staff.email.split('@')[0] : '');
     setEditEmailError('');
     setIsEditModalOpen(true);
   };
@@ -446,18 +450,26 @@ const Accounts = () => {
               {/* Email đăng nhập */}
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Email đăng nhập *</label>
-                <div className="relative group">
-                  <span className="absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-[#0052ff] transition-colors">
+                <div className="flex rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-700/50 overflow-hidden focus-within:border-[#0052ff] focus-within:bg-white dark:focus-within:bg-slate-700 transition-all">
+                  <span className="pl-3 pr-2 flex items-center text-slate-400 group-focus-within:text-[#0052ff]">
                     <Mail className="w-4.5 h-4.5" />
                   </span>
                   <input
-                    type="email"
+                    type="text"
                     required
-                    value={addForm.email}
-                    onChange={handleAddEmailChange}
-                    placeholder="tên_nhan_vien@odsstore.vn"
-                    className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-700/50 text-xs text-slate-800 dark:text-white placeholder-slate-400 rounded-lg border border-slate-200 dark:border-slate-600 focus:bg-white dark:focus:bg-slate-700 focus:border-[#0052ff] focus:outline-none transition-all"
+                    value={addEmailUsername}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/@.*/, '').trim().toLowerCase();
+                      setAddEmailUsername(val);
+                      setAddForm({ ...addForm, email: val ? `${val}@odsstore.vn` : '' });
+                      validateEmail(val ? `${val}@odsstore.vn` : '', setAddEmailError);
+                    }}
+                    placeholder="tên_nhân_viên"
+                    className="flex-1 py-2 bg-transparent text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none"
                   />
+                  <span className="px-3 bg-slate-200/60 dark:bg-slate-600/60 text-[11px] text-slate-500 dark:text-slate-400 font-extrabold flex items-center border-l border-slate-200 dark:border-slate-600">
+                    @odsstore.vn
+                  </span>
                 </div>
                 {/* Text error hiển thị lỗi miền khi sai format */}
                 {addEmailError && (
@@ -581,19 +593,29 @@ const Accounts = () => {
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
                       Email đăng nhập {editForm.email === 'admin@odsstore.vn' ? '(Khóa Super Admin)' : '*'}
                     </label>
-                    <input
-                      type="email"
-                      required
-                      disabled={editForm.email === 'admin@odsstore.vn'}
-                      value={editForm.email}
-                      onChange={handleEditEmailChange}
-                      className={`w-full px-3 py-2 text-xs rounded-lg border dark:border-slate-600 focus:outline-none transition-all
-                        ${editForm.email === 'admin@odsstore.vn' 
-                          ? 'bg-slate-100 dark:bg-slate-700/80 text-slate-400 dark:text-slate-500 cursor-not-allowed border-slate-200 dark:border-slate-600 font-semibold shadow-inner' 
-                          : 'bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-white border-slate-200 dark:border-slate-600 focus:bg-white dark:focus:bg-slate-700 focus:border-[#0052ff]'
-                        }
-                      `}
-                    />
+                    <div className={`flex rounded-lg border dark:border-slate-600 overflow-hidden focus-within:border-[#0052ff] transition-all
+                      ${editForm.email === 'admin@odsstore.vn' 
+                        ? 'bg-slate-100 dark:bg-slate-700/80 text-slate-400 dark:text-slate-500 cursor-not-allowed border-slate-200 dark:border-slate-600 font-semibold shadow-inner pointer-events-none' 
+                        : 'bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-white border-slate-200 dark:border-slate-600 focus-within:bg-white dark:focus-within:bg-slate-700 focus-within:border-[#0052ff]'
+                      }
+                    `}>
+                      <input
+                        type="text"
+                        required
+                        disabled={editForm.email === 'admin@odsstore.vn'}
+                        value={editEmailUsername}
+                        onChange={(e) => {
+                          const val = e.target.value.replace(/@.*/, '').trim().toLowerCase();
+                          setEditEmailUsername(val);
+                          setEditForm({ ...editForm, email: val ? `${val}@odsstore.vn` : '' });
+                          validateEmail(val ? `${val}@odsstore.vn` : '', setEditEmailError);
+                        }}
+                        className="flex-1 px-3 py-2 bg-transparent text-xs text-slate-800 dark:text-white focus:outline-none disabled:cursor-not-allowed disabled:text-slate-400"
+                      />
+                      <span className="px-3 bg-slate-200/60 dark:bg-slate-600/60 text-[11px] text-slate-500 dark:text-slate-400 font-extrabold flex items-center border-l border-slate-200 dark:border-slate-600">
+                        @odsstore.vn
+                      </span>
+                    </div>
                     {editEmailError && (
                       <p className="text-[10px] text-rose-500 font-bold flex items-center gap-1 mt-1">
                         <AlertTriangle className="w-3 h-3 flex-shrink-0" />
