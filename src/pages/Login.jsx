@@ -120,9 +120,9 @@ const Login = () => {
       {/* Logo Watermark Góc Phải Dưới */}
       <div className="absolute bottom-6 right-8 opacity-20 pointer-events-none">
         <img 
-          src="/assets/logo-ods-horizontal-white.png" 
+          src={isDarkMode ? "/assets/logo-ods-horizontal-white.png" : "/assets/logo-ods-horizontal-black.png"} 
           alt="ODS Brand Logo (Horizontal)" 
-          className={`h-20 object-contain transition-all ${!isDarkMode ? 'invert' : ''}`}
+          className="h-20 object-contain transition-all"
         />
       </div>
 

@@ -370,9 +370,9 @@ const AdminLayout = () => {
           <footer className="mt-12 pt-6 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-start gap-4 text-[11px] text-slate-400 dark:text-slate-600 font-bold uppercase tracking-wider w-full text-center sm:text-left">
             <div className={`transition-opacity duration-300 ${isDarkMode ? 'opacity-80 hover:opacity-100' : 'opacity-30 hover:opacity-60'}`}>
               <img 
-                src="/assets/logo-ods-horizontal-white.png" 
+                src={isDarkMode ? "/assets/logo-ods-horizontal-white.png" : "/assets/logo-ods-horizontal-black.png"} 
                 alt="ODS Brand Logo (Horizontal)" 
-                className={`h-14 object-contain transition-all duration-300 ${!isDarkMode ? 'invert' : ''}`}
+                className="h-14 object-contain transition-all duration-300"
               />
             </div>
             <span>© 2026 ODS Team. All rights reserved.</span>
