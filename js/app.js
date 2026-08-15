@@ -543,7 +543,6 @@ function renderCartDrawer() {
   const cart = Storage.getCart();
   const summary = tinhToanTongTienGioHang();
 
-  // Nếu giỏ hàng trống: Hiển thị trạng thái rỗng
   if (cart.length === 0) {
     container.innerHTML = `
       <div class="cart-empty-state">
@@ -557,23 +556,26 @@ function renderCartDrawer() {
     return;
   }
 
-  // Render danh sách sản phẩm trong giỏ
   container.innerHTML = cart
     .map(
       (item) => `
-    <div class="cart-drawer-item">
+    <div class="cart-drawer-item" style="position:relative;">
       <img src="${item.cover}" alt="${item.title}" class="drawer-item-img">
       <div class="drawer-item-info">
         <div class="drawer-item-title">${item.title}</div>
         <div class="drawer-item-price font-mono">${item.price === 0 ? "Miễn phí" : dinhDangTien(item.price)}</div>
+        <div class="qty-controls" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+          <button class="qty-btn" onclick="thayDoiSoLuong('${item.id}', -1)" style="width:24px;height:24px;border-radius:4px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-weight:bold;">-</button>
+          <span style="font-size:0.875rem;font-weight:600;min-width:16px;text-align:center;">${item.quantity || 1}</span>
+          <button class="qty-btn" onclick="thayDoiSoLuong('${item.id}', 1)" style="width:24px;height:24px;border-radius:4px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-weight:bold;">+</button>
+        </div>
       </div>
-      <button class="btn-remove-item" onclick="xoaKhoiGio('${item.id}')" title="Xóa khỏi giỏ">✕</button>
+      <button class="btn-remove-item" onclick="xoaKhoiGio('${item.id}')" title="Xóa khỏi giỏ" style="position:absolute;top:12px;right:12px;">✕</button>
     </div>
   `,
     )
     .join("");
 
-  // Render phần tổng kết và nút tiến hành thanh toán
   if (footerContainer) {
     footerContainer.style.display = "block";
     footerContainer.innerHTML = `
@@ -587,30 +589,145 @@ function renderCartDrawer() {
             ? `
           <div class="summary-row text-accent">
             <span>Voucher (${summary.coupon.code}):</span>
-            <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
+              <button onclick="huyVoucher()" style="background:transparent;border:none;color:#EF4444;cursor:pointer;font-weight:bold;" title="Gỡ mã">✕</button>
+            </div>
           </div>
         `
-            : ""
+            : `
+          <div class="voucher-input-group" style="display:flex; gap:8px; margin: 12px 0;">
+            <input type="text" id="inputVoucherCode" class="form-input" style="height: 36px; border-radius: 6px; font-size: 13px;" placeholder="Nhập mã (vd: DRXVIP)">
+            <button class="btn btn-primary btn-sm" onclick="apDungVoucherBtn()" style="border-radius: 6px; height: 36px; font-size: 13px;">Áp dụng</button>
+          </div>
+        `
         }
-        <div class="summary-row total-row">
+        <div class="summary-row total-row" style="margin-top:12px; border-top: 1px solid #E2E8F0; padding-top: 12px;">
           <span>Tổng thanh toán:</span>
           <span class="font-mono text-xl text-accent font-bold">${dinhDangTien(summary.tongThanhToan)}</span>
         </div>
       </div>
-      <div class="drawer-btn-actions">
-        <button class="btn btn-primary btn-block" onclick="thanhToanDonHang()">
-          Xác Nhận Thanh Toán Ngay
+      <div class="drawer-btn-actions" style="margin-top:16px;">
+        <button class="btn btn-primary btn-block" onclick="moCheckoutModal()">
+          Tiến Hành Thanh Toán
         </button>
       </div>
     `;
   }
 }
 
-// =============================================================================
-// CỤM 8: QUẢN LÝ DANH SÁCH GAME YÊU THÍCH (WISHLIST MODAL)
-// =============================================================================
+function apDungVoucherBtn() {
+  const code = document.getElementById("inputVoucherCode").value;
+  apDungVoucher(code);
+}
 
-// 8.1. Mở Modal danh sách game đã lưu
+// Checkout Modal Functions
+function moCheckoutModal() {
+  const cart = Storage.getCart();
+  if (cart.length === 0) {
+    showToast("Giỏ hàng đang trống!", "error");
+    return;
+  }
+  const currentUser = Storage.getCurrentUser();
+  if (!currentUser) {
+    dongCartDrawer();
+    moModalAuth('login');
+    showToast("Vui lòng đăng nhập để thanh toán!", "info");
+    return;
+  }
+
+  // Populate info
+  document.getElementById("inputCheckoutName").value = currentUser.hoTen || currentUser.taiKhoan;
+  document.getElementById("inputCheckoutEmail").value = currentUser.email || "";
+  document.getElementById("checkoutWalletBalance").innerText = "(Số dư: " + dinhDangTien(currentUser.walletBalance || 0) + ")";
+
+  const summary = tinhToanTongTienGioHang();
+  document.getElementById("checkoutSummary").innerHTML = `
+    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem;">
+      <span>Tổng số game:</span>
+      <span class="font-mono">${summary.soLuong}</span>
+    </div>
+    ${summary.giamGiaVoucher > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem; color:#2563EB;">
+      <span>Giảm giá Voucher:</span>
+      <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
+    </div>` : ''}
+    <div style="display:flex; justify-content:space-between; font-size:1.125rem; font-weight:700; margin-top:12px; border-top:1px solid #E2E8F0; padding-top:12px;">
+      <span>Tổng cần thanh toán:</span>
+      <span class="font-mono text-accent">${dinhDangTien(summary.tongThanhToan)}</span>
+    </div>
+  `;
+
+  dongCartDrawer();
+  const modal = document.getElementById("checkoutModal");
+  if (modal) {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function dongCheckoutModal() {
+  const modal = document.getElementById("checkoutModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
+function submitCheckout(e) {
+  e.preventDefault();
+  
+  const phone = document.getElementById("inputCheckoutPhone").value.trim();
+  const email = document.getElementById("inputCheckoutEmail").value.trim();
+
+  // Validate Phone (10 digits starting with 0)
+  const phoneRegex = /^0\d{9}$/;
+  if (!phoneRegex.test(phone)) {
+    showError("inputCheckoutPhone", "errorCheckoutPhone", "SĐT không hợp lệ (Phải có 10 số và bắt đầu bằng số 0)!");
+    return;
+  } else {
+    clearError("inputCheckoutPhone", "errorCheckoutPhone");
+  }
+
+  // Validate Email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showError("inputCheckoutEmail", "errorCheckoutEmail", "Email không hợp lệ!");
+    return;
+  } else {
+    clearError("inputCheckoutEmail", "errorCheckoutEmail");
+  }
+
+  // Proceed Payment
+  const res = thucHienThanhToan("wallet");
+  if (res && res.success) {
+    dongCheckoutModal();
+    showToast(`🎉 Thanh toán thành công! Mã kích hoạt đã được gửi tới ${email}. Vui lòng kiểm tra Thư viện.`, "success");
+    
+    // Save email & phone to user profile for future
+    const currentUser = Storage.getCurrentUser();
+    currentUser.email = email;
+    currentUser.phone = phone;
+    Storage.setCurrentUser(currentUser);
+    const users = Storage.getUsers();
+    const idx = users.findIndex(u => u.taiKhoan === currentUser.taiKhoan);
+    if (idx !== -1) {
+      users[idx] = currentUser;
+      Storage.saveUsers(users);
+    }
+  }
+}
+
+// Add dismiss logic for checkoutModal
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    dongCheckoutModal();
+  }
+});
+document.getElementById("checkoutModal")?.addEventListener("click", (e) => {
+  if (e.target.id === "checkoutModal") dongCheckoutModal();
+});
+
+// // 8.1. Mở Modal danh sách game đã lưu
 function moWishlistDrawer() {
   const wishlist = Storage.getWishlist();
   const wishGames = GAME_DATABASE.filter((g) => wishlist.includes(g.id));

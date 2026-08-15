@@ -511,6 +511,7 @@ const GENRES_LIST = [
 
 // Danh sách mã giảm giá mẫu
 const VOUCHERS = {
+    DRXVIP: { discount: 10, desc: "Giảm 10% đặc biệt" },
   STEAM50: {
     discount: 50,
     desc: "Giảm 50% toàn bộ đơn hàng (Ưu đãi đặc biệt)",

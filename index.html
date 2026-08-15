@@ -456,6 +456,48 @@
        - render.js: Sinh giao diện HTML động cho thẻ game, modal, giỏ hàng
        - app.js: Điểm khởi chạy chính của ứng dụng, bắt sự kiện, bộ lọc, tìm kiếm
        ========================================================================= -->
+  
+  <!-- 8.5. Cửa sổ Checkout (Thanh Toán) -->
+  <div id="checkoutModal" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <button class="modal-close-btn" onclick="dongCheckoutModal()">✕</button>
+      <div style="padding: 36px 32px;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #0F172A; margin-bottom: 24px;">Xác Nhận Đơn Hàng</h2>
+        <form id="formCheckout" class="auth-form-pane" style="width: 100%;" onsubmit="submitCheckout(event)">
+          <div class="form-group">
+            <label class="form-label">Họ và tên người nhận</label>
+            <input type="text" id="inputCheckoutName" class="form-input" placeholder="Nguyễn Văn A" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số điện thoại liên hệ</label>
+            <input type="tel" id="inputCheckoutPhone" class="form-input" placeholder="SĐT Việt Nam (10 số)" required>
+            <div class="error-msg" id="errorCheckoutPhone"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email nhận Key Game</label>
+            <input type="email" id="inputCheckoutEmail" class="form-input" placeholder="email@domain.com" required>
+            <div class="error-msg" id="errorCheckoutEmail"></div>
+          </div>
+          
+          <div class="drawer-summary-rows" id="checkoutSummary" style="margin: 24px 0; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px solid #E2E8F0;">
+            <!-- Render via JS -->
+          </div>
+          
+          <div class="form-group" style="margin-top: 16px;">
+            <div style="display: flex; gap: 12px;">
+              <label style="flex: 1; padding: 12px; border: 2px solid #3B82F6; border-radius: 12px; background: #EFF6FF; cursor: pointer; text-align: center; font-weight: 600; color: #1E40AF;">
+                Thanh toán bằng Ví DRX
+                <br><span id="checkoutWalletBalance" style="font-size: 0.8rem; font-weight: normal; color: #3B82F6;"></span>
+              </label>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block btn-md" style="margin-top: 8px;">Xác Nhận & Thanh Toán</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
   <script src="js/data.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
