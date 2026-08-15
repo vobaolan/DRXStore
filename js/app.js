@@ -597,7 +597,7 @@ function renderCartDrawer() {
         `
             : `
           <div class="voucher-input-group" style="display:flex; gap:8px; margin: 12px 0;">
-            <input type="text" id="inputVoucherCode" class="form-input" style="height: 36px; border-radius: 6px; font-size: 13px;" placeholder="Nhập mã (vd: DRXVIP)">
+            <input type="text" id="inputVoucherCode" class="form-input" style="height: 36px; border-radius: 6px; font-size: 13px;" placeholder="Nhập mã">
             <button class="btn btn-primary btn-sm" onclick="apDungVoucherBtn()" style="border-radius: 6px; height: 36px; font-size: 13px;">Áp dụng</button>
           </div>
         `
