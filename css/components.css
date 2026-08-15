@@ -981,3 +981,47 @@
   color: #0F172A;
   transform: none;
 }
+
+/* ==========================================================================
+   10. PASSWORD TOGGLE & FORM VALIDATION ERRORS
+   ========================================================================== */
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrap .form-input {
+  padding-right: 44px; /* Make room for the eye icon */
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.btn-toggle-password:hover {
+  color: #475569;
+}
+
+.error-msg {
+  color: #EF4444;
+  font-size: 0.8125rem;
+  margin-top: 6px;
+  display: none;
+  font-weight: 500;
+}
+
+.form-input.is-invalid {
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}

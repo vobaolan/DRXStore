@@ -381,8 +381,18 @@ function submitDangKy(e) {
   e.preventDefault();
   const username = document.getElementById("inputRegUser").value.trim();
   const pass = document.getElementById("inputRegPass").value;
+  const confirmPass = document.getElementById("inputRegConfirmPass") ? document.getElementById("inputRegConfirmPass").value : pass;
   const fullname = document.getElementById("inputRegName").value.trim();
   const email = document.getElementById("inputRegEmail").value.trim();
+
+  // Validate before submit
+  const isEmailValid = validateEmail(email);
+  const isPassValid = validatePassword(pass);
+  const isConfirmValid = validateConfirmPassword(pass, confirmPass);
+
+  if (!isEmailValid || !isPassValid || !isConfirmValid) {
+    return;
+  }
 
   const result = dangKyTaiKhoan(username, pass, fullname, email);
   if (result.success) {
@@ -393,6 +403,111 @@ function submitDangKy(e) {
     showToast(result.message, "error");
   }
 }
+
+
+// 6.8. Hàm xử lý Ẩn/Hiện mật khẩu
+function togglePassword(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const eyeIcon = btn.querySelector('.eye-icon');
+  const eyeOffIcon = btn.querySelector('.eye-off-icon');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (eyeIcon) eyeIcon.style.display = 'none';
+    if (eyeOffIcon) eyeOffIcon.style.display = 'block';
+  } else {
+    input.type = 'password';
+    if (eyeIcon) eyeIcon.style.display = 'block';
+    if (eyeOffIcon) eyeOffIcon.style.display = 'none';
+  }
+}
+
+// 6.9. Validation thời gian thực cho Form Đăng ký
+document.addEventListener('DOMContentLoaded', () => {
+  const emailInput = document.getElementById('inputRegEmail');
+  const passInput = document.getElementById('inputRegPass');
+  const confirmPassInput = document.getElementById('inputRegConfirmPass');
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => validateEmail(emailInput.value));
+  }
+  if (passInput) {
+    passInput.addEventListener('input', () => {
+      validatePassword(passInput.value);
+      if (confirmPassInput && confirmPassInput.value) {
+        validateConfirmPassword(passInput.value, confirmPassInput.value);
+      }
+    });
+  }
+  if (confirmPassInput) {
+    confirmPassInput.addEventListener('input', () => validateConfirmPassword(passInput.value, confirmPassInput.value));
+  }
+});
+
+function showError(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const errorElement = document.getElementById(errorId);
+  if (input) input.classList.add('is-invalid');
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+  }
+}
+
+function clearError(inputId, errorId) {
+  const input = document.getElementById(inputId);
+  const errorElement = document.getElementById(errorId);
+  if (input) input.classList.remove('is-invalid');
+  if (errorElement) {
+    errorElement.textContent = '';
+    errorElement.style.display = 'none';
+  }
+}
+
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email) {
+    clearError('inputRegEmail', 'errorRegEmail');
+    return false;
+  }
+  if (!regex.test(email)) {
+    showError('inputRegEmail', 'errorRegEmail', 'Email không hợp lệ!');
+    return false;
+  } else {
+    clearError('inputRegEmail', 'errorRegEmail');
+    return true;
+  }
+}
+
+function validatePassword(pass) {
+  if (!pass) {
+    clearError('inputRegPass', 'errorRegPass');
+    return false;
+  }
+  if (pass.length < 6) {
+    showError('inputRegPass', 'errorRegPass', 'Mật khẩu phải có ít nhất 6 ký tự!');
+    return false;
+  } else {
+    clearError('inputRegPass', 'errorRegPass');
+    return true;
+  }
+}
+
+function validateConfirmPassword(pass, confirmPass) {
+  if (!confirmPass) {
+    clearError('inputRegConfirmPass', 'errorRegConfirmPass');
+    return false;
+  }
+  if (pass !== confirmPass) {
+    showError('inputRegConfirmPass', 'errorRegConfirmPass', 'Mật khẩu nhập lại không khớp!');
+    return false;
+  } else {
+    clearError('inputRegConfirmPass', 'errorRegConfirmPass');
+    return true;
+  }
+}
+
 
 // =============================================================================
 // CỤM 7: QUẢN LÝ THANH TRƯỢT GIỎ HÀNG (CART SLIDE-IN DRAWER)
