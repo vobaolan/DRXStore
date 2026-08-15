@@ -817,3 +817,78 @@ function setupModalDismissals() {
     }
   });
 }
+
+
+// =============================================================================
+// CỤM 10: THƯ VIỆN GAME (LIBRARY)
+// =============================================================================
+function moModalLibrary() {
+  renderLibrary();
+  const modal = document.getElementById("libraryModal");
+  if (modal) {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function dongModalLibrary() {
+  const modal = document.getElementById("libraryModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
+function renderLibrary() {
+  const container = document.getElementById("libraryItemsContainer");
+  if (!container) return;
+
+  const library = Storage.getLibrary();
+  
+  if (!library || library.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 0;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🎮</div>
+        <h3 style="color: #0F172A; font-weight: 600;">Thư viện trống</h3>
+        <p style="color: #64748B;">Bạn chưa sở hữu game nào. Hãy dạo cửa hàng nhé!</p>
+        <button class="btn btn-primary" style="margin-top: 16px;" onclick="dongModalLibrary()">Mua game ngay</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Kết hợp thông tin từ GAME_DATABASE
+  const libraryItems = library.map(lib => {
+    const game = GAME_DATABASE.find(g => g.id === lib.gameId) || { title: "Game không xác định", cover: "" };
+    return { ...lib, ...game };
+  });
+
+  container.innerHTML = libraryItems.map(item => `
+    <div style="display: flex; gap: 16px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <img src="${item.cover}" alt="${item.title}" style="width: 100px; height: 140px; object-fit: cover; border-radius: 8px;">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="font-size: 1.125rem; font-weight: 700; color: #0F172A; margin: 0 0 8px 0;">${item.title}</h3>
+        <div style="font-size: 0.875rem; color: #64748B; margin-bottom: 4px;">Ngày mua: ${item.purchaseDate}</div>
+        <div style="font-size: 0.875rem; color: #64748B; margin-bottom: 12px;">Trạng thái: ${item.installed ? 'Đã cài đặt' : 'Chưa cài đặt'}</div>
+        
+        <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 12px;">
+          <div style="font-size: 0.75rem; font-weight: 600; color: #64748B; text-transform: uppercase; margin-bottom: 4px;">Mã Kích Hoạt Steam (Key)</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <code style="font-family: monospace; font-size: 1rem; font-weight: 700; color: #2563EB; letter-spacing: 1px; flex: 1;">${item.activationKey}</code>
+            <button onclick="navigator.clipboard.writeText('${item.activationKey}'); showToast('Đã copy mã: ${item.activationKey}', 'success');" style="background: #E0E7FF; color: #4338CA; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+// Add dismiss logic
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    dongModalLibrary();
+  }
+});
+document.getElementById("libraryModal")?.addEventListener("click", (e) => {
+  if (e.target.id === "libraryModal") dongModalLibrary();
+});
