@@ -332,22 +332,31 @@ function dongModalAuth() {
 function chuyenTabAuth(tab) {
   const tabLogin = document.getElementById("tabBtnLogin");
   const tabRegister = document.getElementById("tabBtnRegister");
+  const authTitle = document.getElementById("authModalTitle");
+  const slider = document.getElementById("authFormsSlider");
   const formLogin = document.getElementById("formLogin");
   const formRegister = document.getElementById("formRegister");
-  const authTitle = document.getElementById("authModalTitle");
 
   if (tab === "login") {
     if (tabLogin) tabLogin.classList.add("active");
     if (tabRegister) tabRegister.classList.remove("active");
-    if (formLogin) formLogin.style.display = "block";
-    if (formRegister) formRegister.style.display = "none";
     if (authTitle) authTitle.textContent = "Đăng Nhập DRX Store";
+    if (slider) slider.classList.remove("show-register");
+    if (formLogin) formLogin.style.opacity = "1";
+    if (formRegister) formRegister.style.opacity = "0";
+    // Đảm bảo tab đăng nhập có thể thao tác được
+    if (formLogin) formLogin.style.pointerEvents = "auto";
+    if (formRegister) formRegister.style.pointerEvents = "none";
   } else {
     if (tabLogin) tabLogin.classList.remove("active");
     if (tabRegister) tabRegister.classList.add("active");
-    if (formLogin) formLogin.style.display = "none";
-    if (formRegister) formRegister.style.display = "block";
     if (authTitle) authTitle.textContent = "Đăng Ký Tài Khoản Mới";
+    if (slider) slider.classList.add("show-register");
+    if (formLogin) formLogin.style.opacity = "0";
+    if (formRegister) formRegister.style.opacity = "1";
+    // Đảm bảo tab đăng ký có thể thao tác được
+    if (formLogin) formLogin.style.pointerEvents = "none";
+    if (formRegister) formRegister.style.pointerEvents = "auto";
   }
 }
 
