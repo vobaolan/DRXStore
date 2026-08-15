@@ -1025,3 +1025,11 @@
   border-color: #EF4444 !important;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
 }
+
+#authModal .modal-dialog {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#authModal .modal-dialog::-webkit-scrollbar {
+  display: none;
+}
