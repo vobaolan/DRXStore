@@ -343,7 +343,7 @@
 
   <!-- 8.2. Cửa sổ Đăng nhập & Đăng ký tài khoản (Auth Modal) -->
   <div id="authModal" class="modal-backdrop">
-    <div class="modal-dialog" style="max-width: 440px;">
+    <div class="modal-dialog">
       <!-- Nút đóng modal -->
       <button class="modal-close-btn" onclick="dongModalAuth()">✕</button>
       <div style="padding: 32px 28px;">
@@ -351,12 +351,12 @@
           <span class="badge-dot"></span>
           <span class="badge-text font-mono">ACCOUNT ACCESS</span>
         </div>
-        <h2 id="authModalTitle" style="font-size: 1.5rem; margin-bottom: 20px;">Đăng Nhập Vortex</h2>
+        <h2 id="authModalTitle" style="font-size: 1.5rem; font-weight: 700; color: #0F172A; margin-bottom: 24px;">Đăng Nhập DRX Store</h2>
 
         <!-- Nút chuyển tab Đăng nhập / Đăng ký -->
-        <div class="tab-pills-nav mb-4" style="margin-bottom: 20px;">
-          <button id="tabBtnLogin" class="tab-btn active" style="flex: 1; text-align: center;" onclick="chuyenTabAuth('login')">Đăng nhập</button>
-          <button id="tabBtnRegister" class="tab-btn" style="flex: 1; text-align: center;" onclick="chuyenTabAuth('register')">Đăng ký</button>
+        <div class="auth-tabs-container mb-4">
+          <button id="tabBtnLogin" class="auth-tab-btn active" onclick="chuyenTabAuth('login')">Đăng nhập</button>
+          <button id="tabBtnRegister" class="auth-tab-btn" onclick="chuyenTabAuth('register')">Đăng ký</button>
         </div>
 
         <!-- Wrapper cho hiệu ứng chuyển tab mượt mà -->
