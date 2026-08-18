@@ -1,0 +1,193 @@
+/**
+ * ODS STORE - RESPONSIVE STYLES
+ */
+
+/* ==========================================================================
+   BREAKPOINTS
+   ========================================================================== */
+
+/* 1. Large Laptops & Desktops (max-width: 1200px) */
+@media (max-width: 1200px) {
+  .game-grid-4,
+  .game-grid-5 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .stats-banner-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .stat-item:nth-child(2) {
+    border-right: none;
+  }
+
+  .stat-item:nth-child(3) {
+    border-top: 1px solid var(--color-border);
+    padding-top: 16px;
+  }
+
+  .stat-item:nth-child(4) {
+    border-top: 1px solid var(--color-border);
+    padding-top: 16px;
+    border-right: none;
+  }
+}
+
+/* 2. Tablets & Small Laptops (max-width: 992px) */
+@media (max-width: 992px) {
+  .game-grid-4,
+  .game-grid-5 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .modal-game-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .modal-main-img-wrap {
+    height: 260px;
+  }
+}
+
+/* 3. Tablets & Phablets (max-width: 768px) */
+@media (max-width: 768px) {
+  .site-header {
+    height: 64px;
+  }
+
+  .header-search-wrap {
+    max-width: 200px;
+  }
+
+  .hero-full-video-section {
+    min-height: 500px;
+    height: auto;
+    padding: 60px 0;
+  }
+
+  .hero-overlay-title {
+    font-size: 2.1rem;
+    line-height: 1.25;
+  }
+
+  .hero-overlay-desc {
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+  }
+
+  .hero-overlay-highlights {
+    gap: 8px;
+  }
+
+  .hero-feature-capsule {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+  }
+
+  .game-grid-4,
+  .game-grid-5,
+  .game-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .section-headline {
+    font-size: 1.4rem;
+  }
+
+  .modal-purchase-box {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .modal-action-btns {
+    width: 100%;
+  }
+
+  .modal-action-btns .btn {
+    flex: 1;
+  }
+
+  .cart-drawer-panel {
+    width: 100vw;
+  }
+}
+
+/* 4. Small Mobile Devices (max-width: 480px) */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .hero-full-video-section {
+    min-height: 440px;
+    padding: 50px 0 35px;
+  }
+
+  .hero-overlay-title {
+    font-size: 1.65rem;
+    line-height: 1.28;
+  }
+
+  .hero-overlay-desc {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  .hero-main-cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero-overlay-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .hero-feature-capsule {
+    justify-content: center;
+    font-size: 0.6875rem;
+    padding: 6px 8px;
+  }
+
+  .game-grid-4,
+  .game-grid-5,
+  .game-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-banner-row {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-item {
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 12px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}
+

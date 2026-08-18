@@ -1,0 +1,70 @@
+/**
+ * DRX STORE - DESIGN TOKENS
+ * Minimalist Modern Theme: Electric Blue Signature, Dual-font typography, Slate contrasts
+ */
+
+:root {
+  /* Color Palette (Minimalist Modern) */
+  --bg-canvas: #FAFAFA;
+  --bg-surface: #FFFFFF;
+  --bg-muted: #F1F5F9;
+  --bg-card: #FFFFFF;
+  
+  --color-foreground: #0F172A;        /* Slate-900 */
+  --color-foreground-muted: #64748B;  /* Slate-500 */
+  --color-foreground-light: #94A3B8;  /* Slate-400 */
+  --color-border: #E2E8F0;            /* Slate-200 */
+  --color-border-dark: #334155;       /* Slate-700 */
+
+  /* The Signature Electric Blue */
+  --color-accent: #0052FF;
+  --color-accent-secondary: #4D7CFF;
+  --color-accent-foreground: #FFFFFF;
+  --color-accent-tint: rgba(0, 82, 255, 0.08);
+  --color-accent-glow: rgba(0, 82, 255, 0.25);
+
+  /* Inverted Contrast Surface (Dark Theme Section) */
+  --bg-dark-section: #0F172A;
+  --text-dark-section: #F8FAFC;
+  --muted-dark-section: #94A3B8;
+  --border-dark-section: #1E293B;
+
+  /* Signature Gradients */
+  --gradient-accent: linear-gradient(135deg, #0052FF 0%, #4D7CFF 100%);
+  --gradient-accent-h: linear-gradient(to right, #0052FF, #4D7CFF);
+  --gradient-accent-soft: linear-gradient(135deg, rgba(0, 82, 255, 0.12) 0%, rgba(77, 124, 255, 0.04) 100%);
+  --gradient-dark-card: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+
+  /* Typography (Google Fonts: Montserrat & Be Vietnam Pro - Chuẩn 100% tiếng Việt, dãn nét hoàn hảo, không bao giờ lỗi dấu) */
+  --font-display: "Montserrat", "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: "Be Vietnam Pro", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, monospace;
+
+  /* Colors */
+  --color-sale: #EF4444;
+  --color-success: #10B981;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  --shadow-accent: 0 4px 14px rgba(0, 82, 255, 0.25);
+  --shadow-accent-lg: 0 8px 24px rgba(0, 82, 255, 0.35);
+
+  /* Border Radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Container */
+  --container-max-width: 1240px;
+}
+
