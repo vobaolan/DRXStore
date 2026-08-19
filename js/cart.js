@@ -233,20 +233,27 @@ function thucHienThanhToan(phuongThuc = "wallet") {
 
   // 8.1. Nếu thanh toán bằng ví DRX Store, kiểm tra số dư
   if (phuongThuc === "wallet") {
-    if (!currentUser) {
-      moModalAuth('login');
-      showToast("Vui lòng đăng nhập để thanh toán đơn hàng!", "info");
-      return null;
-    }
-
-    const currentBalance = currentUser.walletBalance || 0;
-    if (currentBalance < summary.tongThanhToan) {
-      showToast(`Số dư ví không đủ (Còn ${dinhDangTien(currentBalance)}, Cần ${dinhDangTien(summary.tongThanhToan)}). Vui lòng nạp thêm tiền!`, "error");
-      return null;
-    }
-
-    // Trừ tiền trong ví
-    currentUser.walletBalance -= summary.tongThanhToan;
+      if (!currentUser) {
+        moModalAuth('login');
+        showToast("Vui lòng đăng nhập để thanh toán đơn hàng!", "info");
+        return null;
+      }
+  
+      const currentBalance = currentUser.walletBalance || 0;
+      if (currentBalance < summary.tongThanhToan) {
+        showToast(`Số dư ví không đủ (Còn ${dinhDangTien(currentBalance)}, Cần ${dinhDangTien(summary.tongThanhToan)}). Vui lòng nạp thêm tiền!`, "error");
+        return null;
+      }
+  
+      currentUser.walletBalance -= summary.tongThanhToan;
+    } else if (phuongThuc === "qr") {
+      if (!currentUser) {
+        moModalAuth('login');
+        showToast("Vui lòng đăng nhập để tiếp tục!", "info");
+        return null;
+      }
+      // Không trừ tiền ví, coi như thanh toán thành công
+    
     Storage.setCurrentUser(currentUser);
 
     // Cập nhật lại trong danh sách người dùng

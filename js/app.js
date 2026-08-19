@@ -777,7 +777,14 @@ function submitCheckout(e) {
   }
 
   // Proceed Payment
-  const res = thucHienThanhToan("wallet");
+  
+    let method = "wallet";
+    const radios = document.getElementsByName("paymentMethod");
+    if (radios && radios[1] && radios[1].checked) {
+      method = "qr";
+    }
+    const res = thucHienThanhToan(method);
+
   if (res && res.success) {
     dongCheckoutModal();
     showToast(`🎉 Thanh toán thành công! Mã kích hoạt đã được gửi tới ${email}. Vui lòng kiểm tra Thư viện.`, "success");
@@ -977,4 +984,36 @@ document.getElementById("libraryModal")?.addEventListener("click", (e) => {
  */
 function moModalHoTro() {
   hienThiToast("🎧 Tổng đài viên DRX Store đang trực tuyến (24/7). Sẵn sàng hỗ trợ kích hoạt key game và bảo hành!", "success");
+}
+
+
+function selectPayment(method) {
+  const lblWallet = document.getElementById("labelPayWallet");
+  const lblQR = document.getElementById("labelPayQR");
+  const qrContainer = document.getElementById("qrCodeContainer");
+  const radios = document.getElementsByName("paymentMethod");
+  
+  if (method === 'wallet') {
+    lblWallet.style.border = "2px solid #3B82F6";
+    lblWallet.style.background = "#EFF6FF";
+    lblWallet.style.color = "#1E40AF";
+    
+    lblQR.style.border = "2px solid #E2E8F0";
+    lblQR.style.background = "#FFFFFF";
+    lblQR.style.color = "#64748B";
+    
+    qrContainer.style.display = "none";
+    radios[0].checked = true;
+  } else {
+    lblQR.style.border = "2px solid #3B82F6";
+    lblQR.style.background = "#EFF6FF";
+    lblQR.style.color = "#1E40AF";
+    
+    lblWallet.style.border = "2px solid #E2E8F0";
+    lblWallet.style.background = "#FFFFFF";
+    lblWallet.style.color = "#64748B";
+    
+    qrContainer.style.display = "block";
+    radios[1].checked = true;
+  }
 }

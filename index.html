@@ -444,12 +444,12 @@
             <form id="formLogin" class="auth-form-pane" onsubmit="submitDangNhap(event)" novalidate>
               <div class="form-group">
                 <label class="form-label">Tên tài khoản</label>
-                <input type="text" id="inputLoginUser" class="form-input" placeholder="Nhập tên tài khoản" required>
+                <input type="text" id="inputLoginUser" class="form-input" placeholder="Nhập tài khoản (vd: khach1)">
               </div>
               <div class="form-group">
                 <label class="form-label">Mật khẩu</label>
                 <div class="password-input-wrap">
-                  <input type="password" id="inputLoginPass" class="form-input" placeholder="Nhập mật khẩu" required>
+                  <input type="password" id="inputLoginPass" class="form-input" placeholder="Nhập mật khẩu (vd: 123456)">
                   <button type="button" class="btn-toggle-password" onclick="togglePassword('inputLoginPass', this)">
                     <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
                     <svg class="eye-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
@@ -562,16 +562,29 @@
           </div>
           
           <div class="form-group" style="margin-top: 16px;">
-            <div style="display: flex; gap: 12px;">
-              <label style="flex: 1; padding: 12px; border: 2px solid #3B82F6; border-radius: 12px; background: #EFF6FF; cursor: pointer; text-align: center; font-weight: 600; color: #1E40AF;">
-                Thanh toán bằng Ví DRX
-                <br><span id="checkoutWalletBalance" style="font-size: 0.8rem; font-weight: normal; color: #3B82F6;"></span>
-              </label>
+              <label class="form-label" style="margin-bottom: 8px;">Phương thức thanh toán</label>
+              <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                <label id="labelPayWallet" style="flex: 1; padding: 12px; border: 2px solid #3B82F6; border-radius: 12px; background: #EFF6FF; cursor: pointer; text-align: center; font-weight: 600; color: #1E40AF; transition: all 0.2s;" onclick="selectPayment('wallet')">
+                  <input type="radio" name="paymentMethod" value="wallet" checked style="display:none;">
+                  Ví DRX
+                  <br><span id="checkoutWalletBalance" style="font-size: 0.8rem; font-weight: normal; color: #3B82F6;"></span>
+                </label>
+                <label id="labelPayQR" style="flex: 1; padding: 12px; border: 2px solid #E2E8F0; border-radius: 12px; background: #FFFFFF; cursor: pointer; text-align: center; font-weight: 600; color: #64748B; transition: all 0.2s;" onclick="selectPayment('qr')">
+                  <input type="radio" name="paymentMethod" value="qr" style="display:none;">
+                  Quét mã QR
+                  <br><span style="font-size: 0.8rem; font-weight: normal;">Chuyển khoản 24/7</span>
+                </label>
+              </div>
+              
+              <div id="qrCodeContainer" style="display: none; text-align: center; padding: 16px; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 12px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ThanhToanDRXStore" alt="QR Code" style="border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                <div style="margin-top: 12px; font-weight: 600; color: #0F172A;">Quét mã bằng App Ngân Hàng</div>
+                <div style="font-size: 0.875rem; color: #64748B;">Đơn hàng sẽ tự động duyệt sau 5-10 giây</div>
+              </div>
             </div>
-          </div>
-          
-          <button type="submit" class="btn btn-primary btn-block btn-md" style="margin-top: 8px;">Xác Nhận & Thanh Toán</button>
-        </form>
+            
+            <button type="submit" class="btn btn-primary btn-block btn-md" style="margin-top: 24px;">Xác Nhận & Thanh Toán</button>
+          </form>
       </div>
     </div>
   </div>
