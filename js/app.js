@@ -32,6 +32,38 @@ function initApp() {
 
   // 1.5. Thiết lập sự kiện cuộn mượt mà (Smooth Scrolling) khi bấm các nút điều hướng
   setupSmoothScrollLinks();
+
+  // 1.6. Thiết lập hiệu ứng Header trong suốt trên Video & chuyển sang Kính Mờ khi tới Flash Sale
+  setupTransparentHeaderScroll();
+}
+
+/**
+ * Quản lý trạng thái trong suốt của thanh Header khi cuộn trang
+ * - Ở đầu trang (Hero Video): Header hoàn toàn trong suốt, video chạy xuyên qua bên dưới
+ * - Khi cuộn xuống tới phần Flash Sale (#specialOffersSection): Header chuyển sang kính mờ trắng (Solid Sticky Glass)
+ */
+function setupTransparentHeaderScroll() {
+  const header = document.querySelector(".site-header");
+  const flashSaleSection = document.getElementById("specialOffersSection");
+  if (!header) return;
+
+  function updateHeaderState() {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    // Ngưỡng chuyển trạng thái: khi mép trên của Flash Sale chạm tới gần Header
+    let threshold = 350;
+    if (flashSaleSection) {
+      threshold = flashSaleSection.offsetTop - 85;
+    }
+
+    if (scrollY >= threshold) {
+      header.classList.add("header-scrolled");
+    } else {
+      header.classList.remove("header-scrolled");
+    }
+  }
+
+  window.addEventListener("scroll", updateHeaderState, { passive: true });
+  updateHeaderState(); // Kiểm tra trạng thái ngay khi vừa tải trang
 }
 
 /**
@@ -326,6 +358,14 @@ function dongModalAuth() {
     modal.classList.remove("active");
     document.body.style.overflow = "";
   }
+  // Bỏ focus input để không bị kẹt popup thông báo của trình duyệt
+  if (document.activeElement && typeof document.activeElement.blur === "function") {
+    document.activeElement.blur();
+  }
+  // Xóa các thông báo lỗi nếu có
+  clearError("inputRegEmail", "errorRegEmail");
+  clearError("inputRegPass", "errorRegPass");
+  clearError("inputRegConfirmPass", "errorRegConfirmPass");
 }
 
 // 6.5. Chuyển đổi giữa Form Đăng nhập và Form Đăng ký
@@ -333,7 +373,6 @@ function chuyenTabAuth(tab) {
   const tabLogin = document.getElementById("tabBtnLogin");
   const tabRegister = document.getElementById("tabBtnRegister");
   const authTitle = document.getElementById("authModalTitle");
-  const slider = document.getElementById("authFormsSlider");
   const formLogin = document.getElementById("formLogin");
   const formRegister = document.getElementById("formRegister");
 
@@ -341,22 +380,30 @@ function chuyenTabAuth(tab) {
     if (tabLogin) tabLogin.classList.add("active");
     if (tabRegister) tabRegister.classList.remove("active");
     if (authTitle) authTitle.textContent = "Đăng Nhập DRX Store";
-    if (slider) slider.classList.remove("show-register");
-    if (formLogin) formLogin.style.opacity = "1";
-    if (formRegister) formRegister.style.opacity = "0";
-    // Đảm bảo tab đăng nhập có thể thao tác được
-    if (formLogin) formLogin.style.pointerEvents = "auto";
-    if (formRegister) formRegister.style.pointerEvents = "none";
+    if (formLogin) {
+      formLogin.style.display = "block";
+      formLogin.style.opacity = "1";
+      formLogin.style.pointerEvents = "auto";
+    }
+    if (formRegister) {
+      formRegister.style.display = "none";
+      formRegister.style.opacity = "0";
+      formRegister.style.pointerEvents = "none";
+    }
   } else {
     if (tabLogin) tabLogin.classList.remove("active");
     if (tabRegister) tabRegister.classList.add("active");
     if (authTitle) authTitle.textContent = "Đăng Ký Tài Khoản Mới";
-    if (slider) slider.classList.add("show-register");
-    if (formLogin) formLogin.style.opacity = "0";
-    if (formRegister) formRegister.style.opacity = "1";
-    // Đảm bảo tab đăng ký có thể thao tác được
-    if (formLogin) formLogin.style.pointerEvents = "none";
-    if (formRegister) formRegister.style.pointerEvents = "auto";
+    if (formLogin) {
+      formLogin.style.display = "none";
+      formLogin.style.opacity = "0";
+      formLogin.style.pointerEvents = "none";
+    }
+    if (formRegister) {
+      formRegister.style.display = "block";
+      formRegister.style.opacity = "1";
+      formRegister.style.pointerEvents = "auto";
+    }
   }
 }
 
@@ -368,10 +415,14 @@ function submitDangNhap(e) {
 
   if (!username) {
     showToast("Vui lòng nhập tên tài khoản!", "error");
+=======
+    document.getElementById("inputLoginUser")?.focus();
+>>>>>>> origin/main
     return;
   }
   if (!pass) {
     showToast("Vui lòng nhập mật khẩu!", "error");
+<<<<<<< HEAD
     return;
   }
 
@@ -908,3 +959,10 @@ document.addEventListener("keydown", (e) => {
 document.getElementById("libraryModal")?.addEventListener("click", (e) => {
   if (e.target.id === "libraryModal") dongModalLibrary();
 });
+
+/**
+ * Hàm mở hộp thoại hoặc thông báo Hỗ trợ Kỹ thuật 24/7
+ */
+function moModalHoTro() {
+  hienThiToast("🎧 Tổng đài viên DRX Store đang trực tuyến (24/7). Sẵn sàng hỗ trợ kích hoạt key game và bảo hành!", "success");
+}

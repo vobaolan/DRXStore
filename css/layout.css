@@ -5,16 +5,25 @@
 /* ==========================================================================
    1. THANH ĐIỀU HƯỚNG ĐẦU TRANG (SITE HEADER & NAVIGATION)
    ========================================================================== */
+/* ==========================================================================
+   1. THANH ĐIỀU HƯỚNG ĐẦU TRANG TRONG SUỐT ĐIỆN ẢNH (TRANSPARENT IMMERSIVE HEADER)
+   - Trạng thái mặc định: Fixed, trong suốt (Transparent), Video chạy xuyên qua bên dưới
+   - Khi cuộn xuống tới Flash Sale (.header-scrolled): Tự động chuyển thành Kính Mờ Trắng (Solid Sticky Glass)
+   ========================================================================== */
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 100;
-  background: rgba(250, 250, 250, 0.9);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   height: 72px;
   display: flex;
   align-items: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .header-container {
@@ -22,6 +31,91 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+}
+
+/* 1.1. Trạng thái trong suốt trên Video Hero (Màu tương phản sáng rõ) */
+.site-header:not(.header-scrolled) .brand-logo-img {
+  filter: brightness(0) invert(1);
+  transition: filter 0.35s ease;
+}
+
+.site-header:not(.header-scrolled) .header-search-input {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+}
+
+.site-header:not(.header-scrolled) .header-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.site-header:not(.header-scrolled) .search-icon-fixed {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.site-header:not(.header-scrolled) .header-search-input:focus {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0F172A;
+  border-color: #0052FF;
+  box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.35);
+}
+
+.site-header:not(.header-scrolled) .header-search-wrap:focus-within .search-icon-fixed {
+  color: #0052FF;
+}
+
+.site-header:not(.header-scrolled) .header-action-btn {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #FFFFFF;
+}
+
+.site-header:not(.header-scrolled) .header-action-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+}
+
+.site-header:not(.header-scrolled) .user-profile-widget {
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.site-header:not(.header-scrolled) .user-name {
+  color: #FFFFFF;
+}
+
+.site-header:not(.header-scrolled) .user-wallet {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.site-header:not(.header-scrolled) .user-wallet b {
+  color: #38BDF8;
+}
+
+.site-header:not(.header-scrolled) .auth-buttons-group .btn-outline {
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* 1.2. Trạng thái khi cuộn xuống tới Flash Sale (Kính Mờ Trắng Sang Trọng - Solid Sticky Glass) */
+.site-header.header-scrolled {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.08);
+}
+
+.site-header.header-scrolled .brand-logo-img {
+  filter: none;
 }
 
 /* Brand Logo */
@@ -327,15 +421,16 @@
 .hero-full-video-section {
   position: relative;
   width: 100%;
-  min-height: 560px;
-  height: 68vh;
-  max-height: 680px;
+  min-height: 620px;
+  height: 76vh;
+  max-height: 750px;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #060913;
   border-bottom: 1px solid var(--color-border);
+  padding-top: 72px; /* Dành khoảng đệm cho thanh header trong suốt chạy đè lên video */
 }
 
 /* Lớp bọc iframe video nền tràn 100% tự động co giãn cover */
@@ -470,24 +565,54 @@
 .hero-main-cta {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 13px 36px;
-  font-size: 1rem;
-  font-weight: 700;
+  gap: 12px;
+  padding: 14px 38px;
+  font-size: 1.0625rem;
+  font-weight: 800;
   color: #FFFFFF;
-  background: linear-gradient(135deg, #0052FF 0%, #0040DB 100%);
+  background: linear-gradient(135deg, #0052FF 0%, #00C6FF 100%);
   border-radius: var(--radius-full);
-  box-shadow: 0 4px 20px rgba(0, 82, 255, 0.45);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  transition: all var(--transition-normal);
+  box-shadow: 0 0 24px rgba(0, 82, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.02em;
+}
+
+.hero-main-cta::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transition: left 0.75s ease;
+}
+
+.hero-main-cta:hover::before {
+  left: 100%;
+}
+
+.hero-main-cta svg {
+  transition: transform 0.3s ease;
 }
 
 .hero-main-cta:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #0060FF 0%, #004DE6 100%);
-  box-shadow: 0 8px 30px rgba(0, 82, 255, 0.65);
+  transform: translateY(-3px) scale(1.03);
+  background: linear-gradient(135deg, #0060FF 0%, #00E5FF 100%);
+  box-shadow: 0 0 35px rgba(0, 198, 255, 0.65), 0 10px 30px rgba(0, 82, 255, 0.6);
   color: #FFFFFF;
+}
+
+.hero-main-cta:hover svg {
+  transform: translateX(4px) scale(1.15);
+}
+
+.hero-main-cta:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
 /* 2.3.5. Dải 4 huy hiệu cam kết dịch vụ dạng viên thuốc kính mờ 1 hàng ngang */
@@ -502,26 +627,85 @@
 .hero-feature-capsule {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 16px;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  gap: 10px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.6) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: var(--radius-full);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: #F1F5F9;
-  transition: all var(--transition-fast);
+  font-weight: 600;
+  color: #F8FAFC;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+
+.hero-feature-capsule::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  transition: left 0.6s ease;
+}
+
+.hero-feature-capsule:hover::before {
+  left: 100%;
+}
+
+.capsule-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.capsule-icon-wrap svg {
+  display: block;
 }
 
 .hero-feature-capsule:hover {
-  border-color: rgba(56, 189, 248, 0.5);
+  border-color: rgba(56, 189, 248, 0.7);
   color: #38BDF8;
-  background: rgba(15, 23, 42, 0.85);
-  transform: translateY(-2px);
-  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(14, 116, 144, 0.4) 100%);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.3), inset 0 0 12px rgba(56, 189, 248, 0.2);
+}
+
+.hero-feature-capsule:hover .capsule-icon-wrap {
+  transform: scale(1.2) rotate(6deg);
+}
+
+.hero-feature-capsule:hover .icon-lightning {
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.hero-feature-capsule:hover .icon-shield {
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.hero-feature-capsule:hover .icon-discount {
+  box-shadow: 0 0 12px rgba(251, 113, 133, 0.6);
+  border-color: rgba(251, 113, 133, 0.4);
+}
+
+.hero-feature-capsule:hover .icon-support {
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+  border-color: rgba(56, 189, 248, 0.4);
 }
 
 /* 2.3.6. Nút tròn kính mờ điều khiển âm thanh ở góc phải dưới video (Chỉ icon, không chữ) */

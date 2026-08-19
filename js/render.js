@@ -23,21 +23,28 @@ function renderGameCard(game, options = {}) {
   let platformLabel = "STEAM KEY";
   if (!game.platforms.includes("windows")) platformLabel = "PC KEY";
 
-  // 1.4. Xây dựng cấu trúc HTML hiển thị giá tiền
+  // 1.4. Xây dựng cấu trúc HTML hiển thị giá tiền (kèm ô giảm giá UIVerse dưới chân)
   let priceHtml = "";
   if (isFree) {
     priceHtml = `<span class="price-free">Miễn Phí</span>`;
   } else if (game.discountPercent > 0) {
-    // Có giảm giá: Hiển thị giá gốc gạch ngang + giá bán nổi bật
+    // Có giảm giá: Hiển thị ô giảm giá đỏ lửa bên cạnh giá gốc gạch ngang + giá bán
     priceHtml = `
-      <div class="price-column">
-        <span class="price-original">${dinhDangTien(game.originalPrice)}</span>
-        <span class="price-final">${dinhDangTien(game.price)}</span>
+      <div class="price-discount-wrap">
+        <span class="discount-badge">-${game.discountPercent}%</span>
+        <div class="price-column">
+          <span class="price-original">${dinhDangTien(game.originalPrice)}</span>
+          <span class="price-final">${dinhDangTien(game.price)}</span>
+        </div>
       </div>
     `;
   } else {
     // Không giảm giá: Chỉ hiển thị giá bán thông thường
-    priceHtml = `<span class="price-final">${dinhDangTien(game.price)}</span>`;
+    priceHtml = `
+      <div class="price-column">
+        <span class="price-final">${dinhDangTien(game.price)}</span>
+      </div>
+    `;
   }
 
   // 1.5. Đánh dấu viền phát sáng đối với game siêu phẩm (rating >= 95 hoặc có flag)
@@ -47,13 +54,9 @@ function renderGameCard(game, options = {}) {
   return `
     <article class="game-card ${isBorderHighlight ? 'game-card-featured-border' : ''}" data-game-id="${game.id}">
       <div class="game-card-inner">
-        <!-- Vùng ảnh Thumbnail Poster dọc -->
+        <!-- Vùng ảnh Thumbnail Poster dọc (100% sạch sẽ, không che hình) -->
         <div class="game-card-thumb" onclick="moModalChiTietGame('${game.id}')">
           <img src="${game.cover}" alt="${game.title}" loading="lazy" class="game-thumb-img">
-          <!-- Huy hiệu phần trăm giảm giá góc trên bên trái -->
-          ${game.discountPercent > 0 ? `<span class="badge-discount-top">-${game.discountPercent}%</span>` : ''}
-          <!-- Huy hiệu nền tảng kích hoạt góc trên bên phải -->
-          <span class="badge-platform-top">${platformLabel}</span>
           <!-- Lớp phủ hover hiển thị nút xem nhanh -->
           <div class="game-thumb-overlay">
             <span class="btn-quick-view">Xem chi tiết</span>
@@ -113,86 +116,113 @@ function renderGameDetailModal(game) {
           ${screenshotsHtml}
         </div>
 
-        <!-- Cấu hình máy tính yêu cầu -->
+        <!-- Cấu hình máy tính yêu cầu dạng Bảng Clean Light (Không cắt chữ, không thừa khoảng trống) -->
         <div class="modal-sys-reqs">
-          <div class="sys-req-title">⚙️ CẤU HÌNH HỆ THỐNG YÊU CẦU:</div>
-          <ul class="sys-req-list">
-            <li><b>HĐH:</b> ${game.systemRequirements.os}</li>
-            <li><b>CPU:</b> ${game.systemRequirements.processor}</li>
-            <li><b>RAM:</b> ${game.systemRequirements.memory}</li>
-            <li><b>GPU:</b> ${game.systemRequirements.graphics}</li>
-            <li><b>Ổ cứng:</b> ${game.systemRequirements.storage}</li>
-          </ul>
+          <div class="sys-req-header">
+            <span class="sys-req-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+              <span>CẤU HÌNH YÊU CẦU</span>
+            </span>
+            <span class="sys-req-sub">Tối thiểu & Đề nghị</span>
+          </div>
+          <div class="sys-req-table">
+            <div class="sys-req-row">
+              <span class="sys-req-key">HĐH:</span>
+              <span class="sys-req-val">${game.systemRequirements.os}</span>
+            </div>
+            <div class="sys-req-row">
+              <span class="sys-req-key">CPU:</span>
+              <span class="sys-req-val">${game.systemRequirements.processor}</span>
+            </div>
+            <div class="sys-req-row">
+              <span class="sys-req-key">RAM:</span>
+              <span class="sys-req-val">${game.systemRequirements.memory}</span>
+            </div>
+            <div class="sys-req-row">
+              <span class="sys-req-key">GPU:</span>
+              <span class="sys-req-val">${game.systemRequirements.graphics}</span>
+            </div>
+            <div class="sys-req-row">
+              <span class="sys-req-key">Ổ cứng:</span>
+              <span class="sys-req-val">${game.systemRequirements.storage}</span>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Cột Phải: Thông tin chi tiết, Đánh giá, Tính năng & Mua ngay -->
       <div class="modal-info-col">
-        <div>
-          <div class="modal-header-meta">
-            <div class="section-badge mb-1">
-              <span class="badge-dot" style="background: #10B981;"></span>
-              <span class="badge-text font-mono" style="color: #10B981;">● BẢN QUYỀN STEAM KEY</span>
-            </div>
-            <h2 class="modal-game-title">${game.title}</h2>
-            <p class="modal-game-desc">${game.description}</p>
-          </div>
+        <div class="modal-header-meta">
+          <h2 class="modal-game-title">${game.title}</h2>
+          <p class="modal-game-desc">${game.description}</p>
+        </div>
 
-          <div class="modal-meta-table">
-            <div class="meta-row">
-              <span class="meta-label">Đánh giá:</span>
-              <span class="meta-value text-accent font-semibold">${game.reviewStatus} (${game.reviewCount.toLocaleString('vi-VN')})</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Ngày ra mắt:</span>
-              <span class="meta-value font-mono">${game.releaseDate}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Nhà phát triển:</span>
-              <span class="meta-value">${game.developer}</span>
-            </div>
-            <div class="meta-row">
-              <span class="meta-label">Thể loại:</span>
-              <div class="meta-tags-wrap">${tagsHtml}</div>
-            </div>
+        <div class="modal-meta-table">
+          <div class="meta-row">
+            <span class="meta-label">Đánh giá:</span>
+            <span class="meta-value text-accent font-semibold">${game.reviewStatus} (${game.reviewCount.toLocaleString('vi-VN')})</span>
           </div>
-
-          <!-- Hộp Tính Năng Đi Kèm -->
-          <div class="modal-features-grid">
-            <div class="modal-feature-pill">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-              <span>Single-player & Co-op</span>
-            </div>
-            <div class="modal-feature-pill">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-              <span>Steam Cloud Save</span>
-            </div>
-            <div class="modal-feature-pill">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4-3c-.83 0-1.5-.67-1.5-1.5S18.67 9 19.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-              <span>Hỗ trợ tay cầm</span>
-            </div>
-            <div class="modal-feature-pill">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              <span>Tự động giao key 5s</span>
-            </div>
+          <div class="meta-row">
+            <span class="meta-label">Ngày ra mắt:</span>
+            <span class="meta-value font-mono">${game.releaseDate}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Nhà phát triển:</span>
+            <span class="meta-value">${game.developer}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Thể loại:</span>
+            <div class="meta-tags-wrap">${tagsHtml}</div>
           </div>
         </div>
 
-        <!-- Mua / Thêm giỏ hàng -->
+        <!-- 2. Hộp 4 Tính Năng Nâng Tầm UIVerse (Không rớt chữ) -->
+        <div class="modal-features-grid">
+          <div class="modal-feature-pill">
+            <span class="modal-feat-icon-wrap feat-blue">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </span>
+            <span>Chơi đơn & Co-op</span>
+          </div>
+          <div class="modal-feature-pill">
+            <span class="modal-feat-icon-wrap feat-cyan">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path></svg>
+            </span>
+            <span>Steam Cloud</span>
+          </div>
+          <div class="modal-feature-pill">
+            <span class="modal-feat-icon-wrap feat-indigo">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="6"></rect></svg>
+            </span>
+            <span>Hỗ trợ tay cầm</span>
+          </div>
+          <div class="modal-feature-pill">
+            <span class="modal-feat-icon-wrap feat-emerald">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </span>
+            <span>Tự động giao key</span>
+          </div>
+        </div>
+
+        <!-- 3. Khung Mua Hàng Nâng Cấp UIVerse -->
         <div class="modal-purchase-box">
           <div class="modal-price-wrap">
             ${game.discountPercent > 0 ? `
-              <span class="discount-badge-lg">-${game.discountPercent}%</span>
+              <span class="modal-discount-tag">-${game.discountPercent}%</span>
               <div class="modal-price-col">
-                <span class="price-original">${dinhDangTien(game.originalPrice)}</span>
-                <span class="price-final text-2xl">${dinhDangTien(game.price)}</span>
+                <span class="modal-price-original">${dinhDangTien(game.originalPrice)}</span>
+                <span class="modal-price-final">${dinhDangTien(game.price)}</span>
               </div>
-            ` : `<span class="price-final text-2xl">${isFree ? 'Miễn phí' : dinhDangTien(game.price)}</span>`}
+            ` : `
+              <div class="modal-price-col">
+                <span class="modal-price-final">${isFree ? 'Miễn phí' : dinhDangTien(game.price)}</span>
+              </div>
+            `}
           </div>
 
           <div class="modal-action-btns">
-            <button class="btn btn-primary btn-md" onclick="themVaoGio('${game.id}'); dongModalChiTiet();">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+            <button class="modal-btn-cart" onclick="themVaoGio('${game.id}'); dongModalChiTiet();">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
               <span>Thêm vào giỏ hàng</span>
             </button>
           </div>
