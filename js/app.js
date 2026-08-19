@@ -415,17 +415,14 @@ function submitDangNhap(e) {
 
   if (!username) {
     showToast("Vui lòng nhập tên tài khoản!", "error");
-=======
     document.getElementById("inputLoginUser")?.focus();
->>>>>>> origin/main
     return;
   }
   if (!pass) {
     showToast("Vui lòng nhập mật khẩu!", "error");
-<<<<<<< HEAD
+    document.getElementById("inputLoginPass")?.focus();
     return;
   }
-
 
   const result = dangNhapTaiKhoan(username, pass);
   if (result.success) {
@@ -446,11 +443,26 @@ function submitDangKy(e) {
   const fullname = document.getElementById("inputRegName").value.trim();
   const email = document.getElementById("inputRegEmail").value.trim();
 
-  if (!username || !fullname) {
-    showToast("Vui lòng điền đầy đủ Tên tài khoản và Họ tên!", "error");
+  if (!fullname) {
+    showToast("Vui lòng nhập họ và tên!", "error");
+    document.getElementById("inputRegName")?.focus();
     return;
   }
-
+  if (!username) {
+    showToast("Vui lòng nhập tên đăng nhập!", "error");
+    document.getElementById("inputRegUser")?.focus();
+    return;
+  }
+  if (!email) {
+    showToast("Vui lòng nhập địa chỉ email!", "error");
+    document.getElementById("inputRegEmail")?.focus();
+    return;
+  }
+  if (!pass) {
+    showToast("Vui lòng nhập mật khẩu!", "error");
+    document.getElementById("inputRegPass")?.focus();
+    return;
+  }
 
   // Validate before submit
   const isEmailValid = validateEmail(email);
@@ -675,7 +687,7 @@ function renderCartDrawer() {
         </div>
       </div>
       <div class="drawer-btn-actions" style="margin-top:16px;">
-        <button class="btn btn-primary btn-block" onclick="moCheckoutModal()">
+        <button class="btn btn-primary btn-block btn-md" onclick="moCheckoutModal()">
           Tiến Hành Thanh Toán
         </button>
       </div>
@@ -918,7 +930,7 @@ function renderLibrary() {
         <div style="font-size: 3rem; margin-bottom: 16px;">🎮</div>
         <h3 style="color: #0F172A; font-weight: 600;">Thư viện trống</h3>
         <p style="color: #64748B;">Bạn chưa sở hữu game nào. Hãy dạo cửa hàng nhé!</p>
-        <button class="btn btn-primary" style="margin-top: 16px;" onclick="dongModalLibrary()">Mua game ngay</button>
+        <button class="btn btn-primary btn-md" style="margin-top: 16px;" onclick="dongModalLibrary()">Mua game ngay</button>
       </div>
     `;
     return;

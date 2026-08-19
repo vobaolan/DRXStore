@@ -16,6 +16,9 @@
   transition: all var(--transition-normal);
   white-space: nowrap;
   user-select: none;
+  padding: 0 20px;
+  letter-spacing: 0.3px;
+  min-height: 40px;
 }
 
 .btn:active {
