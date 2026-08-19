@@ -1560,10 +1560,19 @@
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
 }
 
-#authModal .modal-dialog {
+.modal-dialog {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
-#authModal .modal-dialog::-webkit-scrollbar {
+.modal-dialog::-webkit-scrollbar {
   display: none;
 }
+
+
+/* Hide scrollbars universally in modals */
+.modal-dialog *, .modal-dialog { scrollbar-width: none; -ms-overflow-style: none; }
+.modal-dialog *::-webkit-scrollbar, .modal-dialog::-webkit-scrollbar { display: none; }
+
+/* Hide scrollbars for cart drawer */
+.cart-drawer *, .cart-drawer { scrollbar-width: none; -ms-overflow-style: none; }
+.cart-drawer *::-webkit-scrollbar, .cart-drawer::-webkit-scrollbar { display: none; }
