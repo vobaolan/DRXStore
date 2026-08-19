@@ -332,22 +332,31 @@ function dongModalAuth() {
 function chuyenTabAuth(tab) {
   const tabLogin = document.getElementById("tabBtnLogin");
   const tabRegister = document.getElementById("tabBtnRegister");
+  const authTitle = document.getElementById("authModalTitle");
+  const slider = document.getElementById("authFormsSlider");
   const formLogin = document.getElementById("formLogin");
   const formRegister = document.getElementById("formRegister");
-  const authTitle = document.getElementById("authModalTitle");
 
   if (tab === "login") {
     if (tabLogin) tabLogin.classList.add("active");
     if (tabRegister) tabRegister.classList.remove("active");
-    if (formLogin) formLogin.style.display = "block";
-    if (formRegister) formRegister.style.display = "none";
     if (authTitle) authTitle.textContent = "Đăng Nhập DRX Store";
+    if (slider) slider.classList.remove("show-register");
+    if (formLogin) formLogin.style.opacity = "1";
+    if (formRegister) formRegister.style.opacity = "0";
+    // Đảm bảo tab đăng nhập có thể thao tác được
+    if (formLogin) formLogin.style.pointerEvents = "auto";
+    if (formRegister) formRegister.style.pointerEvents = "none";
   } else {
     if (tabLogin) tabLogin.classList.remove("active");
     if (tabRegister) tabRegister.classList.add("active");
-    if (formLogin) formLogin.style.display = "none";
-    if (formRegister) formRegister.style.display = "block";
     if (authTitle) authTitle.textContent = "Đăng Ký Tài Khoản Mới";
+    if (slider) slider.classList.add("show-register");
+    if (formLogin) formLogin.style.opacity = "0";
+    if (formRegister) formRegister.style.opacity = "1";
+    // Đảm bảo tab đăng ký có thể thao tác được
+    if (formLogin) formLogin.style.pointerEvents = "none";
+    if (formRegister) formRegister.style.pointerEvents = "auto";
   }
 }
 
@@ -372,8 +381,18 @@ function submitDangKy(e) {
   e.preventDefault();
   const username = document.getElementById("inputRegUser").value.trim();
   const pass = document.getElementById("inputRegPass").value;
+  const confirmPass = document.getElementById("inputRegConfirmPass") ? document.getElementById("inputRegConfirmPass").value : pass;
   const fullname = document.getElementById("inputRegName").value.trim();
   const email = document.getElementById("inputRegEmail").value.trim();
+
+  // Validate before submit
+  const isEmailValid = validateEmail(email);
+  const isPassValid = validatePassword(pass);
+  const isConfirmValid = validateConfirmPassword(pass, confirmPass);
+
+  if (!isEmailValid || !isPassValid || !isConfirmValid) {
+    return;
+  }
 
   const result = dangKyTaiKhoan(username, pass, fullname, email);
   if (result.success) {
@@ -384,6 +403,111 @@ function submitDangKy(e) {
     showToast(result.message, "error");
   }
 }
+
+
+// 6.8. Hàm xử lý Ẩn/Hiện mật khẩu
+function togglePassword(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const eyeIcon = btn.querySelector('.eye-icon');
+  const eyeOffIcon = btn.querySelector('.eye-off-icon');
+  
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (eyeIcon) eyeIcon.style.display = 'none';
+    if (eyeOffIcon) eyeOffIcon.style.display = 'block';
+  } else {
+    input.type = 'password';
+    if (eyeIcon) eyeIcon.style.display = 'block';
+    if (eyeOffIcon) eyeOffIcon.style.display = 'none';
+  }
+}
+
+// 6.9. Validation thời gian thực cho Form Đăng ký
+document.addEventListener('DOMContentLoaded', () => {
+  const emailInput = document.getElementById('inputRegEmail');
+  const passInput = document.getElementById('inputRegPass');
+  const confirmPassInput = document.getElementById('inputRegConfirmPass');
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => validateEmail(emailInput.value));
+  }
+  if (passInput) {
+    passInput.addEventListener('input', () => {
+      validatePassword(passInput.value);
+      if (confirmPassInput && confirmPassInput.value) {
+        validateConfirmPassword(passInput.value, confirmPassInput.value);
+      }
+    });
+  }
+  if (confirmPassInput) {
+    confirmPassInput.addEventListener('input', () => validateConfirmPassword(passInput.value, confirmPassInput.value));
+  }
+});
+
+function showError(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const errorElement = document.getElementById(errorId);
+  if (input) input.classList.add('is-invalid');
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+  }
+}
+
+function clearError(inputId, errorId) {
+  const input = document.getElementById(inputId);
+  const errorElement = document.getElementById(errorId);
+  if (input) input.classList.remove('is-invalid');
+  if (errorElement) {
+    errorElement.textContent = '';
+    errorElement.style.display = 'none';
+  }
+}
+
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email) {
+    clearError('inputRegEmail', 'errorRegEmail');
+    return false;
+  }
+  if (!regex.test(email)) {
+    showError('inputRegEmail', 'errorRegEmail', 'Email không hợp lệ!');
+    return false;
+  } else {
+    clearError('inputRegEmail', 'errorRegEmail');
+    return true;
+  }
+}
+
+function validatePassword(pass) {
+  if (!pass) {
+    clearError('inputRegPass', 'errorRegPass');
+    return false;
+  }
+  if (pass.length < 6) {
+    showError('inputRegPass', 'errorRegPass', 'Mật khẩu phải có ít nhất 6 ký tự!');
+    return false;
+  } else {
+    clearError('inputRegPass', 'errorRegPass');
+    return true;
+  }
+}
+
+function validateConfirmPassword(pass, confirmPass) {
+  if (!confirmPass) {
+    clearError('inputRegConfirmPass', 'errorRegConfirmPass');
+    return false;
+  }
+  if (pass !== confirmPass) {
+    showError('inputRegConfirmPass', 'errorRegConfirmPass', 'Mật khẩu nhập lại không khớp!');
+    return false;
+  } else {
+    clearError('inputRegConfirmPass', 'errorRegConfirmPass');
+    return true;
+  }
+}
+
 
 // =============================================================================
 // CỤM 7: QUẢN LÝ THANH TRƯỢT GIỎ HÀNG (CART SLIDE-IN DRAWER)
@@ -419,7 +543,6 @@ function renderCartDrawer() {
   const cart = Storage.getCart();
   const summary = tinhToanTongTienGioHang();
 
-  // Nếu giỏ hàng trống: Hiển thị trạng thái rỗng
   if (cart.length === 0) {
     container.innerHTML = `
       <div class="cart-empty-state">
@@ -433,23 +556,26 @@ function renderCartDrawer() {
     return;
   }
 
-  // Render danh sách sản phẩm trong giỏ
   container.innerHTML = cart
     .map(
       (item) => `
-    <div class="cart-drawer-item">
+    <div class="cart-drawer-item" style="position:relative;">
       <img src="${item.cover}" alt="${item.title}" class="drawer-item-img">
       <div class="drawer-item-info">
         <div class="drawer-item-title">${item.title}</div>
         <div class="drawer-item-price font-mono">${item.price === 0 ? "Miễn phí" : dinhDangTien(item.price)}</div>
+        <div class="qty-controls" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
+          <button class="qty-btn" onclick="thayDoiSoLuong('${item.id}', -1)" style="width:24px;height:24px;border-radius:4px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-weight:bold;">-</button>
+          <span style="font-size:0.875rem;font-weight:600;min-width:16px;text-align:center;">${item.quantity || 1}</span>
+          <button class="qty-btn" onclick="thayDoiSoLuong('${item.id}', 1)" style="width:24px;height:24px;border-radius:4px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-weight:bold;">+</button>
+        </div>
       </div>
-      <button class="btn-remove-item" onclick="xoaKhoiGio('${item.id}')" title="Xóa khỏi giỏ">✕</button>
+      <button class="btn-remove-item" onclick="xoaKhoiGio('${item.id}')" title="Xóa khỏi giỏ" style="position:absolute;top:12px;right:12px;">✕</button>
     </div>
   `,
     )
     .join("");
 
-  // Render phần tổng kết và nút tiến hành thanh toán
   if (footerContainer) {
     footerContainer.style.display = "block";
     footerContainer.innerHTML = `
@@ -463,30 +589,145 @@ function renderCartDrawer() {
             ? `
           <div class="summary-row text-accent">
             <span>Voucher (${summary.coupon.code}):</span>
-            <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
+              <button onclick="huyVoucher()" style="background:transparent;border:none;color:#EF4444;cursor:pointer;font-weight:bold;" title="Gỡ mã">✕</button>
+            </div>
           </div>
         `
-            : ""
+            : `
+          <div class="voucher-input-group" style="display:flex; gap:8px; margin: 12px 0;">
+            <input type="text" id="inputVoucherCode" class="form-input" style="height: 36px; border-radius: 6px; font-size: 13px;" placeholder="Nhập mã">
+            <button class="btn btn-primary btn-sm" onclick="apDungVoucherBtn()" style="border-radius: 6px; height: 36px; font-size: 13px;">Áp dụng</button>
+          </div>
+        `
         }
-        <div class="summary-row total-row">
+        <div class="summary-row total-row" style="margin-top:12px; border-top: 1px solid #E2E8F0; padding-top: 12px;">
           <span>Tổng thanh toán:</span>
           <span class="font-mono text-xl text-accent font-bold">${dinhDangTien(summary.tongThanhToan)}</span>
         </div>
       </div>
-      <div class="drawer-btn-actions">
-        <button class="btn btn-primary btn-block" onclick="thanhToanDonHang()">
-          Xác Nhận Thanh Toán Ngay
+      <div class="drawer-btn-actions" style="margin-top:16px;">
+        <button class="btn btn-primary btn-block" onclick="moCheckoutModal()">
+          Tiến Hành Thanh Toán
         </button>
       </div>
     `;
   }
 }
 
-// =============================================================================
-// CỤM 8: QUẢN LÝ DANH SÁCH GAME YÊU THÍCH (WISHLIST MODAL)
-// =============================================================================
+function apDungVoucherBtn() {
+  const code = document.getElementById("inputVoucherCode").value;
+  apDungVoucher(code);
+}
 
-// 8.1. Mở Modal danh sách game đã lưu
+// Checkout Modal Functions
+function moCheckoutModal() {
+  const cart = Storage.getCart();
+  if (cart.length === 0) {
+    showToast("Giỏ hàng đang trống!", "error");
+    return;
+  }
+  const currentUser = Storage.getCurrentUser();
+  if (!currentUser) {
+    dongCartDrawer();
+    moModalAuth('login');
+    showToast("Vui lòng đăng nhập để thanh toán!", "info");
+    return;
+  }
+
+  // Populate info
+  document.getElementById("inputCheckoutName").value = currentUser.hoTen || currentUser.taiKhoan;
+  document.getElementById("inputCheckoutEmail").value = currentUser.email || "";
+  document.getElementById("checkoutWalletBalance").innerText = "(Số dư: " + dinhDangTien(currentUser.walletBalance || 0) + ")";
+
+  const summary = tinhToanTongTienGioHang();
+  document.getElementById("checkoutSummary").innerHTML = `
+    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem;">
+      <span>Tổng số game:</span>
+      <span class="font-mono">${summary.soLuong}</span>
+    </div>
+    ${summary.giamGiaVoucher > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem; color:#2563EB;">
+      <span>Giảm giá Voucher:</span>
+      <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
+    </div>` : ''}
+    <div style="display:flex; justify-content:space-between; font-size:1.125rem; font-weight:700; margin-top:12px; border-top:1px solid #E2E8F0; padding-top:12px;">
+      <span>Tổng cần thanh toán:</span>
+      <span class="font-mono text-accent">${dinhDangTien(summary.tongThanhToan)}</span>
+    </div>
+  `;
+
+  dongCartDrawer();
+  const modal = document.getElementById("checkoutModal");
+  if (modal) {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function dongCheckoutModal() {
+  const modal = document.getElementById("checkoutModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
+function submitCheckout(e) {
+  e.preventDefault();
+  
+  const phone = document.getElementById("inputCheckoutPhone").value.trim();
+  const email = document.getElementById("inputCheckoutEmail").value.trim();
+
+  // Validate Phone (10 digits starting with 0)
+  const phoneRegex = /^0\d{9}$/;
+  if (!phoneRegex.test(phone)) {
+    showError("inputCheckoutPhone", "errorCheckoutPhone", "SĐT không hợp lệ (Phải có 10 số và bắt đầu bằng số 0)!");
+    return;
+  } else {
+    clearError("inputCheckoutPhone", "errorCheckoutPhone");
+  }
+
+  // Validate Email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    showError("inputCheckoutEmail", "errorCheckoutEmail", "Email không hợp lệ!");
+    return;
+  } else {
+    clearError("inputCheckoutEmail", "errorCheckoutEmail");
+  }
+
+  // Proceed Payment
+  const res = thucHienThanhToan("wallet");
+  if (res && res.success) {
+    dongCheckoutModal();
+    showToast(`🎉 Thanh toán thành công! Mã kích hoạt đã được gửi tới ${email}. Vui lòng kiểm tra Thư viện.`, "success");
+    
+    // Save email & phone to user profile for future
+    const currentUser = Storage.getCurrentUser();
+    currentUser.email = email;
+    currentUser.phone = phone;
+    Storage.setCurrentUser(currentUser);
+    const users = Storage.getUsers();
+    const idx = users.findIndex(u => u.taiKhoan === currentUser.taiKhoan);
+    if (idx !== -1) {
+      users[idx] = currentUser;
+      Storage.saveUsers(users);
+    }
+  }
+}
+
+// Add dismiss logic for checkoutModal
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    dongCheckoutModal();
+  }
+});
+document.getElementById("checkoutModal")?.addEventListener("click", (e) => {
+  if (e.target.id === "checkoutModal") dongCheckoutModal();
+});
+
+// // 8.1. Mở Modal danh sách game đã lưu
 function moWishlistDrawer() {
   const wishlist = Storage.getWishlist();
   const wishGames = GAME_DATABASE.filter((g) => wishlist.includes(g.id));
@@ -576,3 +817,78 @@ function setupModalDismissals() {
     }
   });
 }
+
+
+// =============================================================================
+// CỤM 10: THƯ VIỆN GAME (LIBRARY)
+// =============================================================================
+function moModalLibrary() {
+  renderLibrary();
+  const modal = document.getElementById("libraryModal");
+  if (modal) {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+function dongModalLibrary() {
+  const modal = document.getElementById("libraryModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
+function renderLibrary() {
+  const container = document.getElementById("libraryItemsContainer");
+  if (!container) return;
+
+  const library = Storage.getLibrary();
+  
+  if (!library || library.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px 0;">
+        <div style="font-size: 3rem; margin-bottom: 16px;">🎮</div>
+        <h3 style="color: #0F172A; font-weight: 600;">Thư viện trống</h3>
+        <p style="color: #64748B;">Bạn chưa sở hữu game nào. Hãy dạo cửa hàng nhé!</p>
+        <button class="btn btn-primary" style="margin-top: 16px;" onclick="dongModalLibrary()">Mua game ngay</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Kết hợp thông tin từ GAME_DATABASE
+  const libraryItems = library.map(lib => {
+    const game = GAME_DATABASE.find(g => g.id === lib.gameId) || { title: "Game không xác định", cover: "" };
+    return { ...lib, ...game };
+  });
+
+  container.innerHTML = libraryItems.map(item => `
+    <div style="display: flex; gap: 16px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+      <img src="${item.cover}" alt="${item.title}" style="width: 100px; height: 140px; object-fit: cover; border-radius: 8px;">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+        <h3 style="font-size: 1.125rem; font-weight: 700; color: #0F172A; margin: 0 0 8px 0;">${item.title}</h3>
+        <div style="font-size: 0.875rem; color: #64748B; margin-bottom: 4px;">Ngày mua: ${item.purchaseDate}</div>
+        <div style="font-size: 0.875rem; color: #64748B; margin-bottom: 12px;">Trạng thái: ${item.installed ? 'Đã cài đặt' : 'Chưa cài đặt'}</div>
+        
+        <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 12px;">
+          <div style="font-size: 0.75rem; font-weight: 600; color: #64748B; text-transform: uppercase; margin-bottom: 4px;">Mã Kích Hoạt Steam (Key)</div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <code style="font-family: monospace; font-size: 1rem; font-weight: 700; color: #2563EB; letter-spacing: 1px; flex: 1;">${item.activationKey}</code>
+            <button onclick="navigator.clipboard.writeText('${item.activationKey}'); showToast('Đã copy mã: ${item.activationKey}', 'success');" style="background: #E0E7FF; color: #4338CA; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+// Add dismiss logic
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    dongModalLibrary();
+  }
+});
+document.getElementById("libraryModal")?.addEventListener("click", (e) => {
+  if (e.target.id === "libraryModal") dongModalLibrary();
+});

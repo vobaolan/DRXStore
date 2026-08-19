@@ -343,58 +343,88 @@
 
   <!-- 8.2. Cửa sổ Đăng nhập & Đăng ký tài khoản (Auth Modal) -->
   <div id="authModal" class="modal-backdrop">
-    <div class="modal-dialog" style="max-width: 440px;">
+    <div class="modal-dialog">
       <!-- Nút đóng modal -->
       <button class="modal-close-btn" onclick="dongModalAuth()">✕</button>
-      <div style="padding: 32px 28px;">
+      <div style="padding: 36px 32px;">
         <div class="section-badge mb-2">
           <span class="badge-dot"></span>
           <span class="badge-text font-mono">ACCOUNT ACCESS</span>
         </div>
-        <h2 id="authModalTitle" style="font-size: 1.5rem; margin-bottom: 20px;">Đăng Nhập Vortex</h2>
+        <h2 id="authModalTitle" style="font-size: 1.5rem; font-weight: 700; color: #0F172A; margin-bottom: 24px;">Đăng Nhập DRX Store</h2>
 
         <!-- Nút chuyển tab Đăng nhập / Đăng ký -->
-        <div class="tab-pills-nav mb-4" style="margin-bottom: 20px;">
-          <button id="tabBtnLogin" class="tab-btn active" style="flex: 1; text-align: center;" onclick="chuyenTabAuth('login')">Đăng nhập</button>
-          <button id="tabBtnRegister" class="tab-btn" style="flex: 1; text-align: center;" onclick="chuyenTabAuth('register')">Đăng ký</button>
+        <div class="auth-tabs-container mb-4">
+          <button id="tabBtnLogin" class="auth-tab-btn active" onclick="chuyenTabAuth('login')">Đăng nhập</button>
+          <button id="tabBtnRegister" class="auth-tab-btn" onclick="chuyenTabAuth('register')">Đăng ký</button>
         </div>
 
-        <!-- Form Đăng nhập -->
-        <form id="formLogin" onsubmit="submitDangNhap(event)">
-          <div class="form-group">
-            <label class="form-label">Tên tài khoản</label>
-            <input type="text" id="inputLoginUser" class="form-input" placeholder="Nhập tài khoản (vd: khach1)" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Mật khẩu</label>
-            <input type="password" id="inputLoginPass" class="form-input" placeholder="Nhập mật khẩu (vd: 123456)" required>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block btn-md">Đăng Nhập Ngay</button>
-          <p class="text-muted-foreground mt-4" style="font-size: 0.8125rem; text-align: center;">
-            Tài khoản mẫu có sẵn: <b>khach1</b> / Mật khẩu: <b>123456</b>
-          </p>
-        </form>
+        <!-- Wrapper cho hiệu ứng chuyển tab mượt mà -->
+        <div class="auth-forms-wrapper">
+          <div class="auth-forms-slider" id="authFormsSlider">
+            <!-- Form Đăng nhập -->
+            <form id="formLogin" class="auth-form-pane" onsubmit="submitDangNhap(event)">
+              <div class="form-group">
+                <label class="form-label">Tên tài khoản</label>
+                <input type="text" id="inputLoginUser" class="form-input" placeholder="Nhập tài khoản (vd: khach1)" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <div class="password-input-wrap">
+                  <input type="password" id="inputLoginPass" class="form-input" placeholder="Nhập mật khẩu (vd: 123456)" required>
+                  <button type="button" class="btn-toggle-password" onclick="togglePassword('inputLoginPass', this)">
+                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block btn-md">Đăng Nhập Ngay</button>
+              <p class="text-muted-foreground mt-4" style="font-size: 0.8125rem; text-align: center;">
+                Tài khoản mẫu có sẵn: <b>khach1</b> / Mật khẩu: <b>123456</b>
+              </p>
+            </form>
 
-        <!-- Form Đăng ký -->
-        <form id="formRegister" onsubmit="submitDangKy(event)" style="display: none;">
-          <div class="form-group">
-            <label class="form-label">Họ và tên</label>
-            <input type="text" id="inputRegName" class="form-input" placeholder="Nguyễn Văn A" required>
+            <!-- Form Đăng ký -->
+            <form id="formRegister" class="auth-form-pane" onsubmit="submitDangKy(event)">
+              <div class="form-group">
+                <label class="form-label">Họ và tên</label>
+                <input type="text" id="inputRegName" class="form-input" placeholder="Nguyễn Văn A" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tên tài khoản</label>
+                <input type="text" id="inputRegUser" class="form-input" placeholder="Tên đăng nhập (ít nhất 3 ký tự)" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="inputRegEmail" class="form-input" placeholder="email@domain.com" required>
+                <div class="error-msg" id="errorRegEmail"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mật khẩu</label>
+                <div class="password-input-wrap">
+                  <input type="password" id="inputRegPass" class="form-input" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
+                  <button type="button" class="btn-toggle-password" onclick="togglePassword('inputRegPass', this)">
+                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                  </button>
+                </div>
+                <div class="error-msg" id="errorRegPass"></div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nhập lại mật khẩu</label>
+                <div class="password-input-wrap">
+                  <input type="password" id="inputRegConfirmPass" class="form-input" placeholder="Nhập lại mật khẩu" required>
+                  <button type="button" class="btn-toggle-password" onclick="togglePassword('inputRegConfirmPass', this)">
+                    <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <svg class="eye-off-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                  </button>
+                </div>
+                <div class="error-msg" id="errorRegConfirmPass"></div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block btn-md">Tạo Tài Khoản & Nhận 1.000.000đ</button>
+            </form>
           </div>
-          <div class="form-group">
-            <label class="form-label">Tên tài khoản</label>
-            <input type="text" id="inputRegUser" class="form-input" placeholder="Tên đăng nhập (ít nhất 3 ký tự)" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" id="inputRegEmail" class="form-input" placeholder="email@domain.com" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Mật khẩu</label>
-            <input type="password" id="inputRegPass" class="form-input" placeholder="Mật khẩu (ít nhất 6 ký tự)" required>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block btn-md">Tạo Tài Khoản & Nhận 1.000.000đ</button>
-        </form>
+        </div>
       </div>
     </div>
   </div>
@@ -426,6 +456,63 @@
        - render.js: Sinh giao diện HTML động cho thẻ game, modal, giỏ hàng
        - app.js: Điểm khởi chạy chính của ứng dụng, bắt sự kiện, bộ lọc, tìm kiếm
        ========================================================================= -->
+  
+  <!-- 8.5. Cửa sổ Checkout (Thanh Toán) -->
+  <div id="checkoutModal" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <button class="modal-close-btn" onclick="dongCheckoutModal()">✕</button>
+      <div style="padding: 36px 32px;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #0F172A; margin-bottom: 24px;">Xác Nhận Đơn Hàng</h2>
+        <form id="formCheckout" class="auth-form-pane" style="width: 100%;" onsubmit="submitCheckout(event)">
+          <div class="form-group">
+            <label class="form-label">Họ và tên người nhận</label>
+            <input type="text" id="inputCheckoutName" class="form-input" placeholder="Nguyễn Văn A" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Số điện thoại liên hệ</label>
+            <input type="tel" id="inputCheckoutPhone" class="form-input" placeholder="SĐT Việt Nam (10 số)" required>
+            <div class="error-msg" id="errorCheckoutPhone"></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email nhận Key Game</label>
+            <input type="email" id="inputCheckoutEmail" class="form-input" placeholder="email@domain.com" required>
+            <div class="error-msg" id="errorCheckoutEmail"></div>
+          </div>
+          
+          <div class="drawer-summary-rows" id="checkoutSummary" style="margin: 24px 0; background: #F8FAFC; padding: 16px; border-radius: 12px; border: 1px solid #E2E8F0;">
+            <!-- Render via JS -->
+          </div>
+          
+          <div class="form-group" style="margin-top: 16px;">
+            <div style="display: flex; gap: 12px;">
+              <label style="flex: 1; padding: 12px; border: 2px solid #3B82F6; border-radius: 12px; background: #EFF6FF; cursor: pointer; text-align: center; font-weight: 600; color: #1E40AF;">
+                Thanh toán bằng Ví DRX
+                <br><span id="checkoutWalletBalance" style="font-size: 0.8rem; font-weight: normal; color: #3B82F6;"></span>
+              </label>
+            </div>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block btn-md" style="margin-top: 8px;">Xác Nhận & Thanh Toán</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- Cửa sổ Thư viện Game (Library) -->
+  <div id="libraryModal" class="modal-backdrop">
+    <div class="modal-dialog" style="max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+      <button class="modal-close-btn" onclick="dongModalLibrary()" style="z-index: 10;">✕</button>
+      <div style="padding: 24px 28px; border-bottom: 1px solid #E2E8F0; flex-shrink: 0;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: #0F172A; margin: 0;">🎮 Thư viện Game của bạn</h2>
+        <p style="color: #64748B; margin-top: 4px; font-size: 0.9rem;">Danh sách các game đã mua và mã kích hoạt Steam.</p>
+      </div>
+      <div id="libraryItemsContainer" style="padding: 24px 28px; overflow-y: auto; flex-grow: 1; background: #F8FAFC;">
+        <!-- Render via JS -->
+      </div>
+    </div>
+  </div>
+
   <script src="js/data.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>

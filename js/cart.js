@@ -24,44 +24,55 @@ function themVaoGio(gameId) {
   const cart = Storage.getCart();
   const game = GAME_DATABASE.find(g => g.id === gameId);
 
-  // 2.1. Kiểm tra tính hợp lệ của game
   if (!game) {
     showToast("Không tìm thấy thông tin game!", "error");
     return;
   }
 
-  // 2.2. Kiểm tra xem người dùng đã mua game này vào Thư viện (Library) chưa
   const library = Storage.getLibrary();
   if (library.some(item => item.gameId === gameId)) {
     showToast(`Bạn đã sở hữu "${game.title}" trong Thư viện Game!`, "info");
     return;
   }
 
-  // 2.3. Kiểm tra game đã có sẵn trong giỏ hàng chưa
-  if (cart.some(item => item.id === gameId)) {
-    showToast(`"${game.title}" đã có sẵn trong giỏ hàng!`, "info");
-    return;
+  const existingItem = cart.find(item => item.id === gameId);
+  if (existingItem) {
+    existingItem.quantity = (existingItem.quantity || 1) + 1;
+    showToast(`Đã tăng số lượng "${game.title}"!`, "success");
+  } else {
+    cart.push({
+      id: game.id,
+      title: game.title,
+      price: game.price,
+      originalPrice: game.originalPrice,
+      discountPercent: game.discountPercent,
+      cover: game.cover,
+      platforms: game.platforms,
+      quantity: 1
+    });
+    showToast(`Đã thêm "${game.title}" vào giỏ hàng!`, "success");
   }
 
-  // 2.4. Thêm đối tượng game mới vào mảng giỏ hàng
-  cart.push({
-    id: game.id,
-    title: game.title,
-    price: game.price,
-    originalPrice: game.originalPrice,
-    discountPercent: game.discountPercent,
-    cover: game.cover,
-    platforms: game.platforms
-  });
-
-  // 2.5. Lưu giỏ hàng vào LocalStorage và cập nhật giao diện
   Storage.saveCart(cart);
   capNhatThanhHeaderCartBadge();
-  showToast(`Đã thêm "${game.title}" vào giỏ hàng!`, "success");
 
-  // 2.6. Làm mới lại ngăn kéo giỏ hàng nếu đang mở
   if (typeof renderCartPage === "function") renderCartPage();
   if (typeof renderCartDrawer === "function") renderCartDrawer();
+}
+
+function thayDoiSoLuong(gameId, delta) {
+  let cart = Storage.getCart();
+  const item = cart.find(g => g.id === gameId);
+  if (item) {
+    item.quantity = (item.quantity || 1) + delta;
+    if (item.quantity <= 0) {
+      xoaKhoiGio(gameId);
+      return;
+    }
+    Storage.saveCart(cart);
+    capNhatThanhHeaderCartBadge();
+    if (typeof renderCartDrawer === "function") renderCartDrawer();
+  }
 }
 // =============================================================================
 // CỤM 3: XÓA SẢN PHẨM KHỎI GIỎ HÀNG (REMOVE FROM CART)
@@ -107,8 +118,9 @@ function tinhToanTongTienGioHang() {
 
   // 4.1. Lặp qua từng game để cộng dồn tiền
   for (let i = 0; i < cart.length; i++) {
-    tamTinh += cart[i].price;
-    giaGoc += cart[i].originalPrice || cart[i].price;
+    const qty = cart[i].quantity || 1;
+    tamTinh += cart[i].price * qty;
+    giaGoc += (cart[i].originalPrice || cart[i].price) * qty;
   }
 
   let giamGiaKhuyenMai = giaGoc - tamTinh; // Mức giảm trực tiếp trên giá bán
@@ -122,7 +134,7 @@ function tinhToanTongTienGioHang() {
   let tongThanhToan = Math.max(0, tamTinh - giamGiaVoucher);
 
   return {
-    soLuong: cart.length,
+    soLuong: cart.reduce((total, item) => total + (item.quantity || 1), 0),
     giaGoc,
     tamTinh,
     giamGiaKhuyenMai,

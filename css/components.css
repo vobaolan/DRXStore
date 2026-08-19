@@ -855,3 +855,181 @@
 }
 
 
+
+
+/* ==========================================================================
+   8. AUTHENTICATION FORMS SLIDER
+   ========================================================================== */
+.auth-forms-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.auth-forms-slider {
+  display: flex;
+  width: 200%;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.auth-forms-slider.show-register {
+  transform: translateX(-50%);
+}
+
+.auth-form-pane {
+  width: 50%;
+  flex-shrink: 0;
+  padding: 0 4px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+/* ==========================================================================
+   9. AUTHENTICATION MODAL COMPACT DESIGN overrides
+   ========================================================================== */
+#authModal .modal-dialog {
+  border-radius: 20px;
+  max-width: 420px !important;
+}
+
+#authModal .section-badge {
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+  padding: 6px 14px;
+}
+
+#authModal .badge-text {
+  color: #2563EB;
+}
+
+#authModal .badge-dot {
+  background-color: #2563EB;
+}
+
+.auth-tabs-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.auth-tab-btn {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border-radius: 100px;
+  color: #64748B;
+  background: #F8FAFC;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.auth-tab-btn.active {
+  background: #0F172A;
+  color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.2);
+}
+
+.auth-form-pane .form-input {
+  border-radius: 12px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  height: 48px;
+  font-size: 0.9375rem;
+}
+
+.auth-form-pane .form-input:focus {
+  background: #FFFFFF;
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.auth-form-pane .form-label {
+  color: #0F172A;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+.auth-form-pane .btn-primary {
+  border-radius: 12px;
+  background: #3B82F6;
+  box-shadow: none;
+  border: none;
+  height: 48px;
+  font-size: 1rem;
+}
+
+.auth-form-pane .btn-primary:hover {
+  background: #2563EB;
+}
+
+#authModal .modal-close-btn {
+  top: 16px;
+  right: 16px;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  color: #64748B;
+  width: 36px;
+  height: 36px;
+}
+
+#authModal .modal-close-btn:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+  transform: none;
+}
+
+/* ==========================================================================
+   10. PASSWORD TOGGLE & FORM VALIDATION ERRORS
+   ========================================================================== */
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrap .form-input {
+  padding-right: 44px; /* Make room for the eye icon */
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #94A3B8;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.btn-toggle-password:hover {
+  color: #475569;
+}
+
+.error-msg {
+  color: #EF4444;
+  font-size: 0.8125rem;
+  margin-top: 6px;
+  display: none;
+  font-weight: 500;
+}
+
+.form-input.is-invalid {
+  border-color: #EF4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+#authModal .modal-dialog {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#authModal .modal-dialog::-webkit-scrollbar {
+  display: none;
+}

@@ -139,6 +139,7 @@ function capNhatThanhHeaderUser() {
         </div>
         <div class="user-dropdown-menu">
           <button onclick="napTienViVaThongBao()" class="dropdown-item btn-deposit">💳 Nạp +500.000đ vào ví</button>
+          <button onclick="moModalLibrary()" class="dropdown-item" style="color: #10B981;">🎮 Thư viện Game</button>
           <hr class="dropdown-divider">
           <button onclick="dangXuatTaiKhoan()" class="dropdown-item text-danger">🚪 Đăng xuất</button>
         </div>
