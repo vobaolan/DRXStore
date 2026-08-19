@@ -366,6 +366,16 @@ function submitDangNhap(e) {
   const username = document.getElementById("inputLoginUser").value.trim();
   const pass = document.getElementById("inputLoginPass").value;
 
+  if (!username) {
+    showToast("Vui lòng nhập tên tài khoản!", "error");
+    return;
+  }
+  if (!pass) {
+    showToast("Vui lòng nhập mật khẩu!", "error");
+    return;
+  }
+
+
   const result = dangNhapTaiKhoan(username, pass);
   if (result.success) {
     showToast(result.message, "success");
@@ -384,6 +394,12 @@ function submitDangKy(e) {
   const confirmPass = document.getElementById("inputRegConfirmPass") ? document.getElementById("inputRegConfirmPass").value : pass;
   const fullname = document.getElementById("inputRegName").value.trim();
   const email = document.getElementById("inputRegEmail").value.trim();
+
+  if (!username || !fullname) {
+    showToast("Vui lòng điền đầy đủ Tên tài khoản và Họ tên!", "error");
+    return;
+  }
+
 
   // Validate before submit
   const isEmailValid = validateEmail(email);
