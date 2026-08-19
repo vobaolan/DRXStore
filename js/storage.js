@@ -46,7 +46,7 @@ function initDefaultStorage() {
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(defaultUsers));
   }
 
-  // 2.2. Khởi tạo thư viện game đã mua ban đầu
+  // 2.2. Khởi tạo thư viện game đã mua ban đầu cho tài khoản mẫu khach1
   if (!localStorage.getItem(STORAGE_KEYS.LIBRARY + "_khach1")) {
     const defaultLibrary = [
       {
@@ -61,12 +61,12 @@ function initDefaultStorage() {
     localStorage.setItem(STORAGE_KEYS.LIBRARY + "_khach1", JSON.stringify(defaultLibrary));
   }
 
-  // 2.3. Khởi tạo giỏ hàng rỗng nếu chưa có
+  // 2.3. Khởi tạo giỏ hàng rỗng cho khách vãng lai nếu chưa có
   if (!localStorage.getItem(STORAGE_KEYS.CART + "_guest")) {
     localStorage.setItem(STORAGE_KEYS.CART + "_guest", JSON.stringify([]));
   }
 
-  // 2.4. Khởi tạo danh sách yêu thích
+  // 2.4. Khởi tạo danh sách yêu thích cho khách vãng lai
   if (!localStorage.getItem(STORAGE_KEYS.WISHLIST + "_guest")) {
     localStorage.setItem(STORAGE_KEYS.WISHLIST + "_guest", JSON.stringify(["GAME_001", "GAME_007"]));
   }
@@ -79,10 +79,12 @@ initDefaultStorage();
 // CỤM 3: ĐỐI TƯỢNG STORAGE - CÁC HÀM GETTER & SETTER TIỆN ÍCH
 // =============================================================================
 const Storage = {
+  // 3.0. Hàm tiện ích lấy hậu tố tên tài khoản (_khach1, _admin hoặc _guest)
   _getUserSuffix() {
     const user = this.getCurrentUser();
-    return user && user.taiKhoan ? '_' + user.taiKhoan : '_guest';
+    return user && user.taiKhoan ? "_" + user.taiKhoan : "_guest";
   },
+
   // 3.1. Quản lý danh sách Users
   getUsers() {
     try {
@@ -113,7 +115,7 @@ const Storage = {
     }
   },
 
-  // 3.3. Quản lý Giỏ hàng (Cart)
+  // 3.3. Quản lý Giỏ hàng (Cart) theo từng User
   getCart() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.CART + this._getUserSuffix())) || [];
@@ -126,7 +128,7 @@ const Storage = {
     localStorage.setItem(STORAGE_KEYS.CART + this._getUserSuffix(), JSON.stringify(cart));
   },
 
-  // 3.4. Quản lý Danh sách yêu thích (Wishlist)
+  // 3.4. Quản lý Danh sách yêu thích (Wishlist) theo từng User
   getWishlist() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.WISHLIST + this._getUserSuffix())) || [];
@@ -139,7 +141,7 @@ const Storage = {
     localStorage.setItem(STORAGE_KEYS.WISHLIST + this._getUserSuffix(), JSON.stringify(wishlist));
   },
 
-  // 3.5. Quản lý Thư viện game đã mua (Library)
+  // 3.5. Quản lý Thư viện game đã mua (Library) theo từng User
   getLibrary() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.LIBRARY + this._getUserSuffix())) || [];
@@ -152,7 +154,7 @@ const Storage = {
     localStorage.setItem(STORAGE_KEYS.LIBRARY + this._getUserSuffix(), JSON.stringify(library));
   },
 
-  // 3.6. Quản lý Mã giảm giá (Coupon)
+  // 3.6. Quản lý Mã giảm giá (Coupon) theo từng User
   getCoupon() {
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEYS.COUPON + this._getUserSuffix()));
