@@ -10,3 +10,7 @@ desktop.ini
 # IDE & Editor files
 .vscode/
 .idea/
+
+# Agent & Skills directories
+skills/
+.skills/
