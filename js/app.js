@@ -7,6 +7,11 @@
 // Biến lưu trữ danh sách game hiện hành
 let filteredGames = [...GAME_DATABASE];
 
+// Trạng thái lọc và sắp xếp hiện hành
+let currentTab = "top-sellers";
+let currentGenre = "Tất cả";
+let currentSort = "default";
+
 // =============================================================================
 // CỤM 1: KHỞI TẠO ỨNG DỤNG KHI TRANG ĐÃ TẢI XONG (DOM CONTENT LOADED)
 // =============================================================================
@@ -20,9 +25,9 @@ function initApp() {
   capNhatThanhHeaderCartBadge();
 
   // 1.2. Render các khu vực hiển thị sản phẩm chính trên Trang chủ
-  renderSpecialOffers(); // Khu vực Flash Sale 5 game
+  renderSpecialOffers();               // Khu vực Flash Sale 5 game
   renderTopSellersTabs("top-sellers"); // Khu vực Bảng xếp hạng game (mặc định tab Bán chạy)
-  renderIndieSpotlight(); // Khu vực Góc Game Indie & Độc quyền 5 game
+  renderIndieSpotlight();              // Khu vực Góc Game Indie & Độc quyền 5 game
 
   // 1.3. Khởi tạo sự kiện tìm kiếm trực tiếp và nút bấm lọc thể loại
   setupSearchAndFilters();
@@ -33,61 +38,31 @@ function initApp() {
   // 1.5. Thiết lập sự kiện cuộn mượt mà (Smooth Scrolling) khi bấm các nút điều hướng
   setupSmoothScrollLinks();
 
-  // 1.6. Thiết lập hiệu ứng Header trong suốt trên Video & chuyển sang Kính Mờ khi tới Flash Sale
-  setupTransparentHeaderScroll();
-}
-
-/**
- * Quản lý trạng thái trong suốt của thanh Header khi cuộn trang
- * - Ở đầu trang (Hero Video): Header hoàn toàn trong suốt, video chạy xuyên qua bên dưới
- * - Khi cuộn xuống tới phần Flash Sale (#specialOffersSection): Header chuyển sang kính mờ trắng (Solid Sticky Glass)
- */
-function setupTransparentHeaderScroll() {
-  const header = document.querySelector(".site-header");
-  const flashSaleSection = document.getElementById("specialOffersSection");
-  if (!header) return;
-
-  function updateHeaderState() {
-    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    // Ngưỡng chuyển trạng thái: khi mép trên của Flash Sale chạm tới gần Header
-    let threshold = 350;
-    if (flashSaleSection) {
-      threshold = flashSaleSection.offsetTop - 85;
-    }
-
-    if (scrollY >= threshold) {
-      header.classList.add("header-scrolled");
-    } else {
-      header.classList.remove("header-scrolled");
-    }
-  }
-
-  window.addEventListener("scroll", updateHeaderState, { passive: true });
-  updateHeaderState(); // Kiểm tra trạng thái ngay khi vừa tải trang
+  // 1.6. Khởi tạo thanh tiến trình cuộn trang & nút Back to Top thông minh
+  khoiTaoTienTrinhCuonTrang();
 }
 
 /**
  * Hàm kích hoạt hiệu ứng cuộn trang mượt mà tới các khu vực sản phẩm (không bị Header che khuất)
  */
 function setupSmoothScrollLinks() {
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener("click", function (e) {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", function(e) {
       const targetId = this.getAttribute("href");
       if (targetId === "#" || targetId === "") return;
-
+      
       const targetElement = document.querySelector(targetId);
       if (targetElement) {
         e.preventDefault();
-
+        
         // Bù trừ 72px chiều cao Header + 24px khoảng cách thoáng đãng để không che tiêu đề & badge
         const headerOffset = 96;
         const elementPosition = targetElement.getBoundingClientRect().top;
-        const offsetPosition =
-          elementPosition + window.pageYOffset - headerOffset;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
         window.scrollTo({
           top: offsetPosition,
-          behavior: "smooth",
+          behavior: "smooth"
         });
       }
     });
@@ -96,10 +71,35 @@ function setupSmoothScrollLinks() {
 
 // =============================================================================
 // CỤM 1.5: ĐIỀU KHIỂN BẬT / TẮT ÂM THANH VIDEO HERO (HERO SOUND CONTROLLER)
-// - Video tự động phát (Autoplay) 100% mượt mà trên mọi trình duyệt & Vercel
-// - Nút icon kính mờ ở góc dưới cho phép người dùng click Bật / Tắt âm thanh
+// - Mặc định chế độ MỞ TIẾNG (Sound ON Default)
+// - Tự động kích hoạt âm thanh trailer 100% âm lượng
 // =============================================================================
-let isHeroSoundActive = false; // Mặc định tắt tiếng để trình duyệt cho phép video tự phát 100% không bị chặn
+let isHeroSoundActive = true;
+
+/**
+ * Hàm gửi lệnh bật âm lượng video trailer lên 100%
+ */
+function kichHoatAmThanhTrailer() {
+  const iframe = document.getElementById("heroBgVideoFrame");
+  if (!iframe || !iframe.contentWindow) return;
+  try {
+    iframe.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+    iframe.contentWindow.postMessage('{"event":"command","func":"setVolume","args":[100]}', '*');
+    iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+  } catch (e) {
+    console.log("Audio status:", e);
+  }
+}
+
+// Kích hoạt âm thanh khi tải trang
+setTimeout(kichHoatAmThanhTrailer, 600);
+
+// Đồng thời kích hoạt âm thanh ngay khi người dùng có thao tác chạm/click đầu tiên
+["click", "scroll", "keydown", "touchstart"].forEach(evt => {
+  window.addEventListener(evt, () => {
+    if (isHeroSoundActive) kichHoatAmThanhTrailer();
+  }, { once: true });
+});
 
 /**
  * Hàm bật / tắt âm thanh khi click nút icon ở góc video
@@ -112,39 +112,25 @@ function toggleHeroSound() {
   if (isHeroSoundActive) {
     // Đang mở -> Chuyển sang TẮT TIẾNG
     try {
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"mute","args":""}',
-        "*",
-      );
+      iframe.contentWindow.postMessage('{"event":"command","func":"mute","args":""}', '*');
     } catch (e) {
       console.log("Audio toggle error:", e);
     }
     isHeroSoundActive = false;
     if (btn) {
       btn.classList.add("muted");
+      btn.setAttribute("title", "Bật âm thanh trailer");
     }
+    showToast("🔇 Đã tắt âm thanh trailer", "info");
   } else {
     // Đang tắt -> Chuyển sang MỞ TIẾNG
-    try {
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"unMute","args":""}',
-        "*",
-      );
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"setVolume","args":[100]}',
-        "*",
-      );
-      iframe.contentWindow.postMessage(
-        '{"event":"command","func":"playVideo","args":""}',
-        "*",
-      );
-    } catch (e) {
-      console.log("Audio toggle error:", e);
-    }
+    kichHoatAmThanhTrailer();
     isHeroSoundActive = true;
     if (btn) {
       btn.classList.remove("muted");
+      btn.setAttribute("title", "Tắt âm thanh trailer");
     }
+    showToast("🔊 Đã mở âm thanh trailer", "success");
   }
 }
 
@@ -158,13 +144,10 @@ function renderSpecialOffers() {
   if (!container) return;
 
   // Lọc các game có giảm giá
-  const deals = GAME_DATABASE.filter((g) => g.discountPercent > 0);
-
+  const deals = GAME_DATABASE.filter(g => g.discountPercent > 0);
+  
   // Render đúng 5 game đầu tiên ra lưới HTML
-  container.innerHTML = deals
-    .slice(0, 5)
-    .map((game) => renderGameCard(game, { highlightBorder: true }))
-    .join("");
+  container.innerHTML = deals.slice(0, 5).map(game => renderGameCard(game, { highlightBorder: true })).join("");
 }
 
 // =============================================================================
@@ -173,31 +156,66 @@ function renderSpecialOffers() {
 // - Hiển thị 10 sản phẩm (2 hàng x 5 cột)
 // =============================================================================
 function renderTopSellersTabs(tabType = "top-sellers") {
-  const container = document.getElementById("tabbedGamesGrid");
-  if (!container) return;
-
   // 3.1. Đổi trạng thái kích hoạt (active) cho nút tab tương ứng
-  document.querySelectorAll(".tab-btn").forEach((btn) => {
+  document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.classList.toggle("active", btn.dataset.tab === tabType);
   });
 
-  // 3.2. Lọc danh sách game theo tiêu chí tab được chọn
-  let gamesToShow = [];
-  if (tabType === "top-sellers") {
-    gamesToShow = GAME_DATABASE.filter((g) => g.isTopSeller);
-  } else if (tabType === "trending") {
-    gamesToShow = GAME_DATABASE.filter((g) => g.isTrending);
-  } else if (tabType === "top-rated") {
-    gamesToShow = [...GAME_DATABASE].sort((a, b) => b.rating - a.rating);
-  } else if (tabType === "under-500k") {
-    gamesToShow = GAME_DATABASE.filter((g) => g.price > 0 && g.price <= 500000);
+  // 3.2. Cập nhật trạng thái tab hiện hành và cập nhật lưới game
+  currentTab = tabType;
+  updateGamesGrid();
+}
+
+/**
+ * Hàm lọc và sắp xếp game tuần tự (Pipeline) dựa trên trạng thái hiện tại
+ */
+function updateGamesGrid() {
+  const container = document.getElementById("tabbedGamesGrid");
+  if (!container) return;
+
+  // 1. Lọc game theo Tab đang chọn
+  let games = [];
+  if (currentTab === "top-sellers") {
+    games = GAME_DATABASE.filter(g => g.isTopSeller);
+  } else if (currentTab === "trending") {
+    games = GAME_DATABASE.filter(g => g.isTrending);
+  } else if (currentTab === "top-rated") {
+    games = [...GAME_DATABASE].sort((a, b) => b.rating - a.rating);
+  } else if (currentTab === "under-500k") {
+    games = GAME_DATABASE.filter(g => g.price > 0 && g.price <= 500000);
+  } else {
+    games = [...GAME_DATABASE];
   }
 
-  // 3.3. Render tối đa 10 game ra giao diện lưới 5 cột
-  container.innerHTML = gamesToShow
-    .slice(0, 10)
-    .map((game) => renderGameCard(game))
-    .join("");
+  // 2. Lọc game theo thể loại (Genre Pill) đang chọn
+  if (currentGenre !== "Tất cả") {
+    games = games.filter(g => g.genres.includes(currentGenre));
+  }
+
+  // 3. Sắp xếp mảng game kết quả theo tiêu chí được chọn từ Dropdown
+  if (currentSort === "price-asc") {
+    games.sort((a, b) => a.price - b.price);
+  } else if (currentSort === "price-desc") {
+    games.sort((a, b) => b.price - a.price);
+  } else if (currentSort === "rating-desc") {
+    games.sort((a, b) => b.rating - a.rating);
+  } else if (currentSort === "name-asc") {
+    games.sort((a, b) => a.title.localeCompare(b.title, "vi"));
+  } else if (currentSort === "sales-desc") {
+    games.sort((a, b) => b.reviewCount - a.reviewCount);
+  }
+
+  // 4. Render tối đa 10 game ra giao diện lưới
+  if (games.length === 0) {
+    container.innerHTML = `
+      <div class="grid-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 48px 0; color: var(--color-foreground-muted); font-family: var(--font-body); font-weight: 500;">
+        <span style="font-size: 2.5rem; display: block; margin-bottom: 12px;">🔍</span>
+        Không tìm thấy tựa game nào phù hợp với bộ lọc hiện tại.
+      </div>
+    `;
+  } else {
+    container.innerHTML = games.slice(0, 10).map(game => renderGameCard(game)).join("");
+  }
 }
 
 // =============================================================================
@@ -209,21 +227,17 @@ function renderIndieSpotlight() {
   const container = document.getElementById("indieSpotlightGrid");
   if (!container) return;
 
-  const indies = GAME_DATABASE.filter(
-    (g) =>
-      g.genres.includes("Indie") ||
-      g.genres.includes("Souls-like") ||
-      g.genres.includes("Roguelike") ||
-      g.genres.includes("Metroidvania") ||
-      g.genres.includes("Cốt truyện hay") ||
-      g.rating >= 95,
+  const indies = GAME_DATABASE.filter(g => 
+    g.genres.includes("Indie") || 
+    g.genres.includes("Souls-like") || 
+    g.genres.includes("Roguelike") || 
+    g.genres.includes("Metroidvania") ||
+    g.genres.includes("Cốt truyện hay") ||
+    g.rating >= 95
   );
-
+  
   // Render 5 game ra giao diện
-  container.innerHTML = indies
-    .slice(0, 5)
-    .map((game) => renderGameCard(game))
-    .join("");
+  container.innerHTML = indies.slice(0, 5).map(game => renderGameCard(game)).join("");
 }
 
 // =============================================================================
@@ -234,9 +248,7 @@ function renderIndieSpotlight() {
 // =============================================================================
 function setupSearchAndFilters() {
   const searchInput = document.getElementById("mainSearchInput");
-  const searchResultsDropdown = document.getElementById(
-    "searchResultsDropdown",
-  );
+  const searchResultsDropdown = document.getElementById("searchResultsDropdown");
 
   // 5.1. Xử lý tìm kiếm trực tiếp trên thanh Header
   if (searchInput) {
@@ -251,11 +263,10 @@ function setupSearchAndFilters() {
       }
 
       // Lọc các game khớp với tiêu đề, thể loại hoặc nhà phát triển
-      const matches = GAME_DATABASE.filter(
-        (g) =>
-          g.title.toLowerCase().includes(query) ||
-          g.genres.some((tag) => tag.toLowerCase().includes(query)) ||
-          g.developer.toLowerCase().includes(query),
+      const matches = GAME_DATABASE.filter(g => 
+        g.title.toLowerCase().includes(query) ||
+        g.genres.some(tag => tag.toLowerCase().includes(query)) ||
+        g.developer.toLowerCase().includes(query)
       ).slice(0, 5);
 
       // Hiển thị kết quả tìm kiếm
@@ -266,45 +277,40 @@ function setupSearchAndFilters() {
           </div>
         `;
       } else {
-        searchResultsDropdown.innerHTML = matches
-          .map(
-            (g) => `
+        searchResultsDropdown.innerHTML = matches.map(g => `
           <div class="search-result-item" onclick="moModalChiTietGame('${g.id}'); dongSearchDropdown();">
             <img src="${g.cover}" alt="${g.title}" class="search-item-thumb">
             <div class="search-item-info">
               <div class="search-item-title">${g.title}</div>
-              <div class="search-item-meta font-mono">${g.genres.slice(0, 2).join(", ")} • ${g.price === 0 ? "Miễn phí" : dinhDangTien(g.price)}</div>
+              <div class="search-item-meta font-mono">${g.genres.slice(0, 2).join(", ")} • ${g.price === 0 ? 'Miễn phí' : dinhDangTien(g.price)}</div>
             </div>
-            ${g.discountPercent > 0 ? `<span class="discount-badge-sm">-${g.discountPercent}%</span>` : ""}
+            ${g.discountPercent > 0 ? `<span class="discount-badge-sm">-${g.discountPercent}%</span>` : ''}
           </div>
-        `,
-          )
-          .join("");
+        `).join("");
       }
 
       searchResultsDropdown.classList.add("show");
     });
   }
 
-  // 5.2. Xử lý các nút lọc nhanh thể loại (Pill Tags)
-  document.querySelectorAll(".filter-genre-pill").forEach((pill) => {
+  // 5.2. Xử lý các nút lọc nhanh thể loại (Pill Tags) và Dropdown Sắp xếp
+  document.querySelectorAll(".filter-genre-pill").forEach(pill => {
     pill.addEventListener("click", () => {
-      document
-        .querySelectorAll(".filter-genre-pill")
-        .forEach((p) => p.classList.remove("active"));
+      document.querySelectorAll(".filter-genre-pill").forEach(p => p.classList.remove("active"));
       pill.classList.add("active");
-      const genre = pill.dataset.genre;
-
-      const tabGrid = document.getElementById("tabbedGamesGrid");
-      if (tabGrid) {
-        let results = GAME_DATABASE;
-        if (genre !== "Tất cả") {
-          results = GAME_DATABASE.filter((g) => g.genres.includes(genre));
-        }
-        tabGrid.innerHTML = results.map((g) => renderGameCard(g)).join("");
-      }
+      currentGenre = pill.dataset.genre;
+      updateGamesGrid();
     });
   });
+
+  // Lắng nghe sự kiện thay đổi của Dropdown Sắp xếp game
+  const sortSelect = document.getElementById("gameSortSelect");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", (e) => {
+      currentSort = e.target.value;
+      updateGamesGrid();
+    });
+  }
 }
 
 // Hàm ẩn dropdown tìm kiếm và xóa text trong ô input
@@ -321,7 +327,7 @@ function dongSearchDropdown() {
 
 // 6.1. Mở Modal xem chi tiết game
 function moModalChiTietGame(gameId) {
-  const game = GAME_DATABASE.find((g) => g.id === gameId);
+  const game = GAME_DATABASE.find(g => g.id === gameId);
   if (!game) return;
 
   renderGameDetailModal(game);
@@ -342,7 +348,7 @@ function dongModalChiTiet() {
 }
 
 // 6.3. Mở Modal tài khoản (Đăng nhập / Đăng ký)
-function moModalAuth(tab = "login") {
+function moModalAuth(tab = 'login') {
   const modal = document.getElementById("authModal");
   if (!modal) return;
 
@@ -358,52 +364,28 @@ function dongModalAuth() {
     modal.classList.remove("active");
     document.body.style.overflow = "";
   }
-  // Bỏ focus input để không bị kẹt popup thông báo của trình duyệt
-  if (document.activeElement && typeof document.activeElement.blur === "function") {
-    document.activeElement.blur();
-  }
-  // Xóa các thông báo lỗi nếu có
-  clearError("inputRegEmail", "errorRegEmail");
-  clearError("inputRegPass", "errorRegPass");
-  clearError("inputRegConfirmPass", "errorRegConfirmPass");
 }
 
 // 6.5. Chuyển đổi giữa Form Đăng nhập và Form Đăng ký
 function chuyenTabAuth(tab) {
   const tabLogin = document.getElementById("tabBtnLogin");
   const tabRegister = document.getElementById("tabBtnRegister");
-  const authTitle = document.getElementById("authModalTitle");
   const formLogin = document.getElementById("formLogin");
   const formRegister = document.getElementById("formRegister");
+  const authTitle = document.getElementById("authModalTitle");
 
-  if (tab === "login") {
+  if (tab === 'login') {
     if (tabLogin) tabLogin.classList.add("active");
     if (tabRegister) tabRegister.classList.remove("active");
+    if (formLogin) formLogin.style.display = "block";
+    if (formRegister) formRegister.style.display = "none";
     if (authTitle) authTitle.textContent = "Đăng Nhập DRX Store";
-    if (formLogin) {
-      formLogin.style.display = "block";
-      formLogin.style.opacity = "1";
-      formLogin.style.pointerEvents = "auto";
-    }
-    if (formRegister) {
-      formRegister.style.display = "none";
-      formRegister.style.opacity = "0";
-      formRegister.style.pointerEvents = "none";
-    }
   } else {
     if (tabLogin) tabLogin.classList.remove("active");
     if (tabRegister) tabRegister.classList.add("active");
+    if (formLogin) formLogin.style.display = "none";
+    if (formRegister) formRegister.style.display = "block";
     if (authTitle) authTitle.textContent = "Đăng Ký Tài Khoản Mới";
-    if (formLogin) {
-      formLogin.style.display = "none";
-      formLogin.style.opacity = "0";
-      formLogin.style.pointerEvents = "none";
-    }
-    if (formRegister) {
-      formRegister.style.display = "block";
-      formRegister.style.opacity = "1";
-      formRegister.style.pointerEvents = "auto";
-    }
   }
 }
 
@@ -412,17 +394,6 @@ function submitDangNhap(e) {
   e.preventDefault();
   const username = document.getElementById("inputLoginUser").value.trim();
   const pass = document.getElementById("inputLoginPass").value;
-
-  if (!username) {
-    showToast("Vui lòng nhập tên tài khoản!", "error");
-    document.getElementById("inputLoginUser")?.focus();
-    return;
-  }
-  if (!pass) {
-    showToast("Vui lòng nhập mật khẩu!", "error");
-    document.getElementById("inputLoginPass")?.focus();
-    return;
-  }
 
   const result = dangNhapTaiKhoan(username, pass);
   if (result.success) {
@@ -439,39 +410,8 @@ function submitDangKy(e) {
   e.preventDefault();
   const username = document.getElementById("inputRegUser").value.trim();
   const pass = document.getElementById("inputRegPass").value;
-  const confirmPass = document.getElementById("inputRegConfirmPass") ? document.getElementById("inputRegConfirmPass").value : pass;
   const fullname = document.getElementById("inputRegName").value.trim();
   const email = document.getElementById("inputRegEmail").value.trim();
-
-  if (!fullname) {
-    showToast("Vui lòng nhập họ và tên!", "error");
-    document.getElementById("inputRegName")?.focus();
-    return;
-  }
-  if (!username) {
-    showToast("Vui lòng nhập tên đăng nhập!", "error");
-    document.getElementById("inputRegUser")?.focus();
-    return;
-  }
-  if (!email) {
-    showToast("Vui lòng nhập địa chỉ email!", "error");
-    document.getElementById("inputRegEmail")?.focus();
-    return;
-  }
-  if (!pass) {
-    showToast("Vui lòng nhập mật khẩu!", "error");
-    document.getElementById("inputRegPass")?.focus();
-    return;
-  }
-
-  // Validate before submit
-  const isEmailValid = validateEmail(email);
-  const isPassValid = validatePassword(pass);
-  const isConfirmValid = validateConfirmPassword(pass, confirmPass);
-
-  if (!isEmailValid || !isPassValid || !isConfirmValid) {
-    return;
-  }
 
   const result = dangKyTaiKhoan(username, pass, fullname, email);
   if (result.success) {
@@ -482,111 +422,6 @@ function submitDangKy(e) {
     showToast(result.message, "error");
   }
 }
-
-
-// 6.8. Hàm xử lý Ẩn/Hiện mật khẩu
-function togglePassword(inputId, btn) {
-  const input = document.getElementById(inputId);
-  if (!input) return;
-  const eyeIcon = btn.querySelector('.eye-icon');
-  const eyeOffIcon = btn.querySelector('.eye-off-icon');
-  
-  if (input.type === 'password') {
-    input.type = 'text';
-    if (eyeIcon) eyeIcon.style.display = 'none';
-    if (eyeOffIcon) eyeOffIcon.style.display = 'block';
-  } else {
-    input.type = 'password';
-    if (eyeIcon) eyeIcon.style.display = 'block';
-    if (eyeOffIcon) eyeOffIcon.style.display = 'none';
-  }
-}
-
-// 6.9. Validation thời gian thực cho Form Đăng ký
-document.addEventListener('DOMContentLoaded', () => {
-  const emailInput = document.getElementById('inputRegEmail');
-  const passInput = document.getElementById('inputRegPass');
-  const confirmPassInput = document.getElementById('inputRegConfirmPass');
-
-  if (emailInput) {
-    emailInput.addEventListener('input', () => validateEmail(emailInput.value));
-  }
-  if (passInput) {
-    passInput.addEventListener('input', () => {
-      validatePassword(passInput.value);
-      if (confirmPassInput && confirmPassInput.value) {
-        validateConfirmPassword(passInput.value, confirmPassInput.value);
-      }
-    });
-  }
-  if (confirmPassInput) {
-    confirmPassInput.addEventListener('input', () => validateConfirmPassword(passInput.value, confirmPassInput.value));
-  }
-});
-
-function showError(inputId, errorId, message) {
-  const input = document.getElementById(inputId);
-  const errorElement = document.getElementById(errorId);
-  if (input) input.classList.add('is-invalid');
-  if (errorElement) {
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
-  }
-}
-
-function clearError(inputId, errorId) {
-  const input = document.getElementById(inputId);
-  const errorElement = document.getElementById(errorId);
-  if (input) input.classList.remove('is-invalid');
-  if (errorElement) {
-    errorElement.textContent = '';
-    errorElement.style.display = 'none';
-  }
-}
-
-function validateEmail(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email) {
-    clearError('inputRegEmail', 'errorRegEmail');
-    return false;
-  }
-  if (!regex.test(email)) {
-    showError('inputRegEmail', 'errorRegEmail', 'Email không hợp lệ!');
-    return false;
-  } else {
-    clearError('inputRegEmail', 'errorRegEmail');
-    return true;
-  }
-}
-
-function validatePassword(pass) {
-  if (!pass) {
-    clearError('inputRegPass', 'errorRegPass');
-    return false;
-  }
-  if (pass.length < 6) {
-    showError('inputRegPass', 'errorRegPass', 'Mật khẩu phải có ít nhất 6 ký tự!');
-    return false;
-  } else {
-    clearError('inputRegPass', 'errorRegPass');
-    return true;
-  }
-}
-
-function validateConfirmPassword(pass, confirmPass) {
-  if (!confirmPass) {
-    clearError('inputRegConfirmPass', 'errorRegConfirmPass');
-    return false;
-  }
-  if (pass !== confirmPass) {
-    showError('inputRegConfirmPass', 'errorRegConfirmPass', 'Mật khẩu nhập lại không khớp!');
-    return false;
-  } else {
-    clearError('inputRegConfirmPass', 'errorRegConfirmPass');
-    return true;
-  }
-}
-
 
 // =============================================================================
 // CỤM 7: QUẢN LÝ THANH TRƯỢT GIỎ HÀNG (CART SLIDE-IN DRAWER)
@@ -622,6 +457,7 @@ function renderCartDrawer() {
   const cart = Storage.getCart();
   const summary = tinhToanTongTienGioHang();
 
+  // Nếu giỏ hàng trống: Hiển thị trạng thái rỗng
   if (cart.length === 0) {
     container.innerHTML = `
       <div class="cart-empty-state">
@@ -635,26 +471,19 @@ function renderCartDrawer() {
     return;
   }
 
-  container.innerHTML = cart
-    .map(
-      (item) => `
-    <div class="cart-drawer-item" style="position:relative;">
+  // Render danh sách sản phẩm trong giỏ
+  container.innerHTML = cart.map(item => `
+    <div class="cart-drawer-item">
       <img src="${item.cover}" alt="${item.title}" class="drawer-item-img">
       <div class="drawer-item-info">
         <div class="drawer-item-title">${item.title}</div>
-        <div class="drawer-item-price font-mono">${item.price === 0 ? "Miễn phí" : dinhDangTien(item.price)}</div>
-        <div class="qty-controls" style="display:flex; align-items:center; gap:8px; margin-top:8px;">
-          <button class="qty-btn" onclick="thayDoiSoLuong('${item.id}', -1)" style="width:24px;height:24px;border-radius:4px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-weight:bold;">-</button>
-          <span style="font-size:0.875rem;font-weight:600;min-width:16px;text-align:center;">${item.quantity || 1}</span>
-          <button class="qty-btn" onclick="thayDoiSoLuong('${item.id}', 1)" style="width:24px;height:24px;border-radius:4px;border:1px solid #E2E8F0;background:#F8FAFC;cursor:pointer;font-weight:bold;">+</button>
-        </div>
+        <div class="drawer-item-price font-mono">${item.price === 0 ? 'Miễn phí' : dinhDangTien(item.price)}</div>
       </div>
-      <button class="btn-remove-item" onclick="xoaKhoiGio('${item.id}')" title="Xóa khỏi giỏ" style="position:absolute;top:12px;right:12px;">✕</button>
+      <button class="btn-remove-item" onclick="xoaKhoiGio('${item.id}')" title="Xóa khỏi giỏ">✕</button>
     </div>
-  `,
-    )
-    .join("");
+  `).join("");
 
+  // Render phần tổng kết và nút tiến hành thanh toán
   if (footerContainer) {
     footerContainer.style.display = "block";
     footerContainer.innerHTML = `
@@ -663,153 +492,34 @@ function renderCartDrawer() {
           <span>Tạm tính (${summary.soLuong} game):</span>
           <span class="font-mono">${dinhDangTien(summary.tamTinh)}</span>
         </div>
-        ${
-          summary.giamGiaVoucher > 0
-            ? `
+        ${summary.giamGiaVoucher > 0 ? `
           <div class="summary-row text-accent">
             <span>Voucher (${summary.coupon.code}):</span>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
-              <button onclick="huyVoucher()" style="background:transparent;border:none;color:#EF4444;cursor:pointer;font-weight:bold;" title="Gỡ mã">✕</button>
-            </div>
+            <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
           </div>
-        `
-            : `
-          <div class="voucher-input-group" style="display:flex; gap:8px; margin: 12px 0;">
-            <input type="text" id="inputVoucherCode" class="form-input" style="height: 36px; border-radius: 6px; font-size: 13px;" placeholder="Nhập mã">
-            <button class="btn btn-primary btn-sm" onclick="apDungVoucherBtn()" style="border-radius: 6px; height: 36px; font-size: 13px;">Áp dụng</button>
-          </div>
-        `
-        }
-        <div class="summary-row total-row" style="margin-top:12px; border-top: 1px solid #E2E8F0; padding-top: 12px;">
+        ` : ''}
+        <div class="summary-row total-row">
           <span>Tổng thanh toán:</span>
           <span class="font-mono text-xl text-accent font-bold">${dinhDangTien(summary.tongThanhToan)}</span>
         </div>
       </div>
-      <div class="drawer-btn-actions" style="margin-top:16px;">
-        <button class="btn btn-primary btn-block btn-md" onclick="moCheckoutModal()">
-          Tiến Hành Thanh Toán
+      <div class="drawer-btn-actions">
+        <button class="btn btn-primary btn-block" onclick="thanhToanDonHang()">
+          Xác Nhận Thanh Toán Ngay
         </button>
       </div>
     `;
   }
 }
 
-function apDungVoucherBtn() {
-  const code = document.getElementById("inputVoucherCode").value;
-  apDungVoucher(code);
-}
+// =============================================================================
+// CỤM 8: QUẢN LÝ DANH SÁCH GAME YÊU THÍCH (WISHLIST MODAL)
+// =============================================================================
 
-// Checkout Modal Functions
-function moCheckoutModal() {
-  const cart = Storage.getCart();
-  if (cart.length === 0) {
-    showToast("Giỏ hàng đang trống!", "error");
-    return;
-  }
-  const currentUser = Storage.getCurrentUser();
-  if (!currentUser) {
-    dongCartDrawer();
-    moModalAuth('login');
-    showToast("Vui lòng đăng nhập để thanh toán!", "info");
-    return;
-  }
-
-  // Populate info
-  document.getElementById("inputCheckoutName").value = currentUser.hoTen || currentUser.taiKhoan;
-  document.getElementById("inputCheckoutEmail").value = currentUser.email || "";
-  document.getElementById("checkoutWalletBalance").innerText = "(Số dư: " + dinhDangTien(currentUser.walletBalance || 0) + ")";
-
-  const summary = tinhToanTongTienGioHang();
-  document.getElementById("checkoutSummary").innerHTML = `
-    <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem;">
-      <span>Tổng số game:</span>
-      <span class="font-mono">${summary.soLuong}</span>
-    </div>
-    ${summary.giamGiaVoucher > 0 ? `<div style="display:flex; justify-content:space-between; margin-bottom:8px; font-size:0.875rem; color:#2563EB;">
-      <span>Giảm giá Voucher:</span>
-      <span class="font-mono">-${dinhDangTien(summary.giamGiaVoucher)}</span>
-    </div>` : ''}
-    <div style="display:flex; justify-content:space-between; font-size:1.125rem; font-weight:700; margin-top:12px; border-top:1px solid #E2E8F0; padding-top:12px;">
-      <span>Tổng cần thanh toán:</span>
-      <span class="font-mono text-accent">${dinhDangTien(summary.tongThanhToan)}</span>
-    </div>
-  `;
-
-  dongCartDrawer();
-  const modal = document.getElementById("checkoutModal");
-  if (modal) {
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-  }
-}
-
-function dongCheckoutModal() {
-  const modal = document.getElementById("checkoutModal");
-  if (modal) {
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
-  }
-}
-
-function submitCheckout(e) {
-  e.preventDefault();
-  
-  const phone = document.getElementById("inputCheckoutPhone").value.trim();
-  const email = document.getElementById("inputCheckoutEmail").value.trim();
-
-  // Validate Phone (10 digits starting with 0)
-  const phoneRegex = /^0\d{9}$/;
-  if (!phoneRegex.test(phone)) {
-    showError("inputCheckoutPhone", "errorCheckoutPhone", "SĐT không hợp lệ (Phải có 10 số và bắt đầu bằng số 0)!");
-    return;
-  } else {
-    clearError("inputCheckoutPhone", "errorCheckoutPhone");
-  }
-
-  // Validate Email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    showError("inputCheckoutEmail", "errorCheckoutEmail", "Email không hợp lệ!");
-    return;
-  } else {
-    clearError("inputCheckoutEmail", "errorCheckoutEmail");
-  }
-
-  // Proceed Payment
-  const res = thucHienThanhToan("wallet");
-  if (res && res.success) {
-    dongCheckoutModal();
-    showToast(`🎉 Thanh toán thành công! Mã kích hoạt đã được gửi tới ${email}. Vui lòng kiểm tra Thư viện.`, "success");
-    
-    // Save email & phone to user profile for future
-    const currentUser = Storage.getCurrentUser();
-    currentUser.email = email;
-    currentUser.phone = phone;
-    Storage.setCurrentUser(currentUser);
-    const users = Storage.getUsers();
-    const idx = users.findIndex(u => u.taiKhoan === currentUser.taiKhoan);
-    if (idx !== -1) {
-      users[idx] = currentUser;
-      Storage.saveUsers(users);
-    }
-  }
-}
-
-// Add dismiss logic for checkoutModal
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    dongCheckoutModal();
-  }
-});
-document.getElementById("checkoutModal")?.addEventListener("click", (e) => {
-  if (e.target.id === "checkoutModal") dongCheckoutModal();
-});
-
-// // 8.1. Mở Modal danh sách game đã lưu
+// 8.1. Mở Modal danh sách game đã lưu
 function moWishlistDrawer() {
   const wishlist = Storage.getWishlist();
-  const wishGames = GAME_DATABASE.filter((g) => wishlist.includes(g.id));
+  const wishGames = GAME_DATABASE.filter(g => wishlist.includes(g.id));
 
   const modal = document.getElementById("wishlistModal");
   const container = document.getElementById("wishlistModalContent");
@@ -827,24 +537,20 @@ function moWishlistDrawer() {
   } else {
     container.innerHTML = `
       <div class="wishlist-grid-list">
-        ${wishGames
-          .map(
-            (g) => `
+        ${wishGames.map(g => `
           <div class="wishlist-row-item">
             <img src="${g.cover}" alt="${g.title}" class="wishlist-item-thumb">
             <div class="wishlist-item-meta">
               <h4>${g.title}</h4>
               <p class="font-mono text-sm text-muted-foreground">${g.genres.slice(0, 2).join(" • ")} | Đánh giá: ★ ${g.rating}%</p>
-              <div class="wishlist-item-price font-mono font-bold">${g.price === 0 ? "Miễn phí" : dinhDangTien(g.price)}</div>
+              <div class="wishlist-item-price font-mono font-bold">${g.price === 0 ? 'Miễn phí' : dinhDangTien(g.price)}</div>
             </div>
             <div class="wishlist-item-btns">
               <button class="btn btn-primary btn-sm" onclick="themVaoGio('${g.id}'); dongWishlistModal();">Thêm vào giỏ</button>
               <button class="btn btn-outline btn-sm" onclick="toggleWishlist('${g.id}'); moWishlistDrawer();">Bỏ thích</button>
             </div>
           </div>
-        `,
-          )
-          .join("")}
+        `).join("")}
       </div>
     `;
   }
@@ -878,7 +584,7 @@ function setupModalDismissals() {
   });
 
   // 9.2. Lắng nghe sự kiện click vào lớp nền tối (backdrop)
-  document.querySelectorAll(".modal-backdrop").forEach((backdrop) => {
+  document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
     backdrop.addEventListener("click", (e) => {
       if (e.target === backdrop) {
         dongModalChiTiet();
@@ -897,84 +603,95 @@ function setupModalDismissals() {
   });
 }
 
-
 // =============================================================================
-// CỤM 10: THƯ VIỆN GAME (LIBRARY)
+// CỤM 10: TIỆN ÍCH CUỘN TRANG (SCROLL UTILITIES: PROGRESS BAR & BACK TO TOP)
 // =============================================================================
-function moModalLibrary() {
-  renderLibrary();
-  const modal = document.getElementById("libraryModal");
-  if (modal) {
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
+function khoiTaoTienTrinhCuonTrang() {
+  // 1. Tạo & chèn HTML cho Scroll Progress Bar
+  if (!document.getElementById("scrollProgressBar")) {
+    const progContainer = document.createElement("div");
+    progContainer.className = "scroll-progress-container";
+    progContainer.innerHTML = `<div id="scrollProgressBar" class="scroll-progress-bar"></div>`;
+    document.body.appendChild(progContainer);
   }
-}
 
-function dongModalLibrary() {
-  const modal = document.getElementById("libraryModal");
-  if (modal) {
-    modal.classList.remove("active");
-    document.body.style.overflow = "";
-  }
-}
-
-function renderLibrary() {
-  const container = document.getElementById("libraryItemsContainer");
-  if (!container) return;
-
-  const library = Storage.getLibrary();
-  
-  if (!library || library.length === 0) {
-    container.innerHTML = `
-      <div style="text-align: center; padding: 40px 0;">
-        <div style="font-size: 3rem; margin-bottom: 16px;">🎮</div>
-        <h3 style="color: #0F172A; font-weight: 600;">Thư viện trống</h3>
-        <p style="color: #64748B;">Bạn chưa sở hữu game nào. Hãy dạo cửa hàng nhé!</p>
-        <button class="btn btn-primary btn-md" style="margin-top: 16px;" onclick="dongModalLibrary()">Mua game ngay</button>
-      </div>
+  // 2. Tạo & chèn HTML cho Nút Back-to-Top thông minh
+  if (!document.getElementById("backToTopBtn")) {
+    const btn = document.createElement("button");
+    btn.id = "backToTopBtn";
+    btn.className = "back-to-top-btn";
+    btn.setAttribute("aria-label", "Quay lại đầu trang");
+    btn.innerHTML = `
+      <svg class="progress-ring" width="50" height="50">
+        <circle class="progress-ring__circle-bg" stroke="rgba(255, 255, 255, 0.08)" stroke-width="3" fill="transparent" r="22" cx="25" cy="25"/>
+        <circle id="progressRingCircle" class="progress-ring__circle" stroke="url(#progressGradient)" stroke-width="3" fill="transparent" r="22" cx="25" cy="25"/>
+        <defs>
+          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="var(--color-accent)" />
+            <stop offset="100%" stop-color="var(--color-accent-secondary)" />
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="arrow-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </span>
     `;
-    return;
+    document.body.appendChild(btn);
+
+    // Sự kiện cuộn mượt lên đầu trang khi click
+    btn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
   }
 
-  // Kết hợp thông tin từ GAME_DATABASE
-  const libraryItems = library.map(lib => {
-    const game = GAME_DATABASE.find(g => g.id === lib.gameId) || { title: "Game không xác định", cover: "" };
-    return { ...lib, ...game };
-  });
+  const progressBar = document.getElementById("scrollProgressBar");
+  const backBtn = document.getElementById("backToTopBtn");
+  const circle = document.getElementById("progressRingCircle");
+  
+  if (!progressBar || !backBtn || !circle) return;
 
-  container.innerHTML = libraryItems.map(item => `
-    <div style="display: flex; gap: 16px; background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-      <img src="${item.cover}" alt="${item.title}" style="width: 100px; height: 140px; object-fit: cover; border-radius: 8px;">
-      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-        <h3 style="font-size: 1.125rem; font-weight: 700; color: #0F172A; margin: 0 0 8px 0;">${item.title}</h3>
-        <div style="font-size: 0.875rem; color: #64748B; margin-bottom: 4px;">Ngày mua: ${item.purchaseDate}</div>
-        <div style="font-size: 0.875rem; color: #64748B; margin-bottom: 12px;">Trạng thái: ${item.installed ? 'Đã cài đặt' : 'Chưa cài đặt'}</div>
-        
-        <div style="background: #F1F5F9; border: 1px dashed #CBD5E1; border-radius: 8px; padding: 12px;">
-          <div style="font-size: 0.75rem; font-weight: 600; color: #64748B; text-transform: uppercase; margin-bottom: 4px;">Mã Kích Hoạt Steam (Key)</div>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <code style="font-family: monospace; font-size: 1rem; font-weight: 700; color: #2563EB; letter-spacing: 1px; flex: 1;">${item.activationKey}</code>
-            <button onclick="navigator.clipboard.writeText('${item.activationKey}'); showToast('Đã copy mã: ${item.activationKey}', 'success');" style="background: #E0E7FF; color: #4338CA; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">Copy</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `).join("");
-}
+  // Tính chu vi vòng tròn r = 22px
+  const radius = circle.r.baseVal.value;
+  const circumference = radius * 2 * Math.PI;
 
-// Add dismiss logic
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    dongModalLibrary();
+  // Thiết lập dasharray ban đầu
+  circle.style.strokeDasharray = `${circumference} ${circumference}`;
+  circle.style.strokeDashoffset = circumference;
+
+  // Hàm cập nhật trạng thái khi cuộn
+  function capNhatTrangThaiCuon() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    
+    if (scrollHeight <= 0) return;
+
+    const scrollPercent = (scrollTop / scrollHeight) * 100;
+
+    // Cập nhật thanh tiến trình ngang
+    progressBar.style.width = `${scrollPercent}%`;
+
+    // Cập nhật viền tròn của nút Back-to-Top
+    const offset = circumference - (scrollPercent / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+
+    // Ẩn hiện nút Back-to-Top dựa trên vị trí cuộn (>300px)
+    if (scrollTop > 300) {
+      backBtn.classList.add("show");
+    } else {
+      backBtn.classList.remove("show");
+    }
   }
-});
-document.getElementById("libraryModal")?.addEventListener("click", (e) => {
-  if (e.target.id === "libraryModal") dongModalLibrary();
-});
 
-/**
- * Hàm mở hộp thoại hoặc thông báo Hỗ trợ Kỹ thuật 24/7
- */
-function moModalHoTro() {
-  hienThiToast("🎧 Tổng đài viên DRX Store đang trực tuyến (24/7). Sẵn sàng hỗ trợ kích hoạt key game và bảo hành!", "success");
+  window.addEventListener("scroll", capNhatTrangThaiCuon, { passive: true });
+  window.addEventListener("resize", capNhatTrangThaiCuon, { passive: true });
+  
+  // Chạy thử ngay khi khởi tạo
+  capNhatTrangThaiCuon();
 }
+
