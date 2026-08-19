@@ -47,7 +47,7 @@ function initDefaultStorage() {
   }
 
   // 2.2. Khởi tạo thư viện game đã mua ban đầu
-  if (!localStorage.getItem(STORAGE_KEYS.LIBRARY)) {
+  if (!localStorage.getItem(STORAGE_KEYS.LIBRARY + "_khach1")) {
     const defaultLibrary = [
       {
         gameId: "GAME_010", // Counter-Strike 2
@@ -58,17 +58,17 @@ function initDefaultStorage() {
         installed: true
       }
     ];
-    localStorage.setItem(STORAGE_KEYS.LIBRARY, JSON.stringify(defaultLibrary));
+    localStorage.setItem(STORAGE_KEYS.LIBRARY + "_khach1", JSON.stringify(defaultLibrary));
   }
 
   // 2.3. Khởi tạo giỏ hàng rỗng nếu chưa có
-  if (!localStorage.getItem(STORAGE_KEYS.CART)) {
-    localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify([]));
+  if (!localStorage.getItem(STORAGE_KEYS.CART + "_guest")) {
+    localStorage.setItem(STORAGE_KEYS.CART + "_guest", JSON.stringify([]));
   }
 
   // 2.4. Khởi tạo danh sách yêu thích
-  if (!localStorage.getItem(STORAGE_KEYS.WISHLIST)) {
-    localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify(["GAME_001", "GAME_007"]));
+  if (!localStorage.getItem(STORAGE_KEYS.WISHLIST + "_guest")) {
+    localStorage.setItem(STORAGE_KEYS.WISHLIST + "_guest", JSON.stringify(["GAME_001", "GAME_007"]));
   }
 }
 
@@ -79,6 +79,10 @@ initDefaultStorage();
 // CỤM 3: ĐỐI TƯỢNG STORAGE - CÁC HÀM GETTER & SETTER TIỆN ÍCH
 // =============================================================================
 const Storage = {
+  _getUserSuffix() {
+    const user = this.getCurrentUser();
+    return user && user.taiKhoan ? '_' + user.taiKhoan : '_guest';
+  },
   // 3.1. Quản lý danh sách Users
   getUsers() {
     try {
@@ -112,46 +116,46 @@ const Storage = {
   // 3.3. Quản lý Giỏ hàng (Cart)
   getCart() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.CART)) || [];
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.CART + this._getUserSuffix())) || [];
     } catch {
       return [];
     }
   },
 
   saveCart(cart) {
-    localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
+    localStorage.setItem(STORAGE_KEYS.CART + this._getUserSuffix(), JSON.stringify(cart));
   },
 
   // 3.4. Quản lý Danh sách yêu thích (Wishlist)
   getWishlist() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.WISHLIST)) || [];
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.WISHLIST + this._getUserSuffix())) || [];
     } catch {
       return [];
     }
   },
 
   saveWishlist(wishlist) {
-    localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify(wishlist));
+    localStorage.setItem(STORAGE_KEYS.WISHLIST + this._getUserSuffix(), JSON.stringify(wishlist));
   },
 
   // 3.5. Quản lý Thư viện game đã mua (Library)
   getLibrary() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.LIBRARY)) || [];
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.LIBRARY + this._getUserSuffix())) || [];
     } catch {
       return [];
     }
   },
 
   saveLibrary(library) {
-    localStorage.setItem(STORAGE_KEYS.LIBRARY, JSON.stringify(library));
+    localStorage.setItem(STORAGE_KEYS.LIBRARY + this._getUserSuffix(), JSON.stringify(library));
   },
 
   // 3.6. Quản lý Mã giảm giá (Coupon)
   getCoupon() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEYS.COUPON));
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.COUPON + this._getUserSuffix()));
     } catch {
       return null;
     }
@@ -159,9 +163,9 @@ const Storage = {
 
   setCoupon(coupon) {
     if (!coupon) {
-      localStorage.removeItem(STORAGE_KEYS.COUPON);
+      localStorage.removeItem(STORAGE_KEYS.COUPON + this._getUserSuffix());
     } else {
-      localStorage.setItem(STORAGE_KEYS.COUPON, JSON.stringify(coupon));
+      localStorage.setItem(STORAGE_KEYS.COUPON + this._getUserSuffix(), JSON.stringify(coupon));
     }
   }
 };
