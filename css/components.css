@@ -1567,3 +1567,53 @@
 #authModal .modal-dialog::-webkit-scrollbar {
   display: none;
 }
+
+/* ==========================================================================
+   20. FLASH SALE COUNTDOWN TIMER
+   ========================================================================== */
+.flash-sale-countdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.20);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  line-height: 1;
+}
+
+.countdown-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-sale);
+  letter-spacing: 0.08em;
+  margin-right: 4px;
+}
+
+.countdown-box {
+  background: var(--color-sale);
+  color: #FFFFFF;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  padding: 3px 6px;
+  border-radius: var(--radius-sm);
+  min-width: 22px;
+  text-align: center;
+  display: inline-block;
+}
+
+.countdown-colon {
+  color: var(--color-sale);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  animation: flash-colon 1s infinite;
+}
+
+@keyframes flash-colon {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+

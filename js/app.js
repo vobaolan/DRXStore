@@ -7,6 +7,11 @@
 // Biến lưu trữ danh sách game hiện hành
 let filteredGames = [...GAME_DATABASE];
 
+// Trạng thái lọc và sắp xếp hiện hành
+let currentTab = "top-sellers";
+let currentGenre = "Tất cả";
+let currentSort = "default";
+
 // =============================================================================
 // CỤM 1: KHỞI TẠO ỨNG DỤNG KHI TRANG ĐÃ TẢI XONG (DOM CONTENT LOADED)
 // =============================================================================
@@ -35,6 +40,12 @@ function initApp() {
 
   // 1.6. Thiết lập hiệu ứng Header trong suốt trên Video & chuyển sang Kính Mờ khi tới Flash Sale
   setupTransparentHeaderScroll();
+
+  // 1.7. Khởi tạo thanh tiến trình cuộn trang & nút Back to Top thông minh
+  khoiTaoTienTrinhCuonTrang();
+
+  // 1.8. Khởi tạo đếm ngược Flash Sale
+  capNhatCountdownFlashSale();
 }
 
 /**
@@ -173,31 +184,69 @@ function renderSpecialOffers() {
 // - Hiển thị 10 sản phẩm (2 hàng x 5 cột)
 // =============================================================================
 function renderTopSellersTabs(tabType = "top-sellers") {
-  const container = document.getElementById("tabbedGamesGrid");
-  if (!container) return;
-
+  currentTab = tabType;
   // 3.1. Đổi trạng thái kích hoạt (active) cho nút tab tương ứng
   document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.tab === tabType);
   });
+  updateGamesGrid();
+}
 
-  // 3.2. Lọc danh sách game theo tiêu chí tab được chọn
+/**
+ * Hàm lọc và sắp xếp game tuần tự (Pipeline) dựa trên trạng thái hiện tại
+ */
+function updateGamesGrid() {
+  const container = document.getElementById("tabbedGamesGrid");
+  if (!container) return;
+
+  // 1. Lọc game theo Tab đang chọn
   let gamesToShow = [];
-  if (tabType === "top-sellers") {
+  if (currentTab === "top-sellers") {
     gamesToShow = GAME_DATABASE.filter((g) => g.isTopSeller);
-  } else if (tabType === "trending") {
+  } else if (currentTab === "trending") {
     gamesToShow = GAME_DATABASE.filter((g) => g.isTrending);
-  } else if (tabType === "top-rated") {
+  } else if (currentTab === "top-rated") {
     gamesToShow = [...GAME_DATABASE].sort((a, b) => b.rating - a.rating);
-  } else if (tabType === "under-500k") {
+  } else if (currentTab === "under-500k") {
     gamesToShow = GAME_DATABASE.filter((g) => g.price > 0 && g.price <= 500000);
+  } else {
+    gamesToShow = [...GAME_DATABASE];
   }
 
-  // 3.3. Render tối đa 10 game ra giao diện lưới 5 cột
-  container.innerHTML = gamesToShow
-    .slice(0, 10)
-    .map((game) => renderGameCard(game))
-    .join("");
+  // 2. Lọc game theo thể loại đang chọn
+  if (currentGenre !== "Tất cả") {
+    gamesToShow = gamesToShow.filter((g) => g.genres.includes(currentGenre));
+  }
+
+  // 3. Sắp xếp mảng game kết quả theo tiêu chí được chọn từ Dropdown
+  if (currentSort === "price-asc") {
+    gamesToShow.sort((a, b) => a.price - b.price);
+  } else if (currentSort === "price-desc") {
+    gamesToShow.sort((a, b) => b.price - a.price);
+  } else if (currentSort === "best-selling") {
+    gamesToShow.sort((a, b) => {
+      if (a.isTopSeller && !b.isTopSeller) return -1;
+      if (!a.isTopSeller && b.isTopSeller) return 1;
+      return b.reviewCount - a.reviewCount;
+    });
+  } else if (currentSort === "name-asc") {
+    gamesToShow.sort((a, b) => a.title.localeCompare(b.title, "vi"));
+  }
+
+  // 4. Render tối đa 10 game ra giao diện lưới 5 cột
+  if (gamesToShow.length === 0) {
+    container.innerHTML = `
+      <div class="grid-empty-state" style="grid-column: 1 / -1; text-align: center; padding: 48px 0; color: var(--color-foreground-muted); font-family: var(--font-body); font-weight: 500;">
+        <span style="font-size: 2.5rem; display: block; margin-bottom: 12px;">🔍</span>
+        Không tìm thấy tựa game nào phù hợp với bộ lọc hiện tại.
+      </div>
+    `;
+  } else {
+    container.innerHTML = gamesToShow
+      .slice(0, 10)
+      .map((game) => renderGameCard(game))
+      .join("");
+  }
 }
 
 // =============================================================================
@@ -293,18 +342,19 @@ function setupSearchAndFilters() {
         .querySelectorAll(".filter-genre-pill")
         .forEach((p) => p.classList.remove("active"));
       pill.classList.add("active");
-      const genre = pill.dataset.genre;
-
-      const tabGrid = document.getElementById("tabbedGamesGrid");
-      if (tabGrid) {
-        let results = GAME_DATABASE;
-        if (genre !== "Tất cả") {
-          results = GAME_DATABASE.filter((g) => g.genres.includes(genre));
-        }
-        tabGrid.innerHTML = results.map((g) => renderGameCard(g)).join("");
-      }
+      currentGenre = pill.dataset.genre;
+      updateGamesGrid();
     });
   });
+
+  // 5.3. Xử lý thay đổi của Dropdown Sắp xếp game
+  const sortSelect = document.getElementById("gameSortSelect");
+  if (sortSelect) {
+    sortSelect.addEventListener("change", (e) => {
+      currentSort = e.target.value;
+      updateGamesGrid();
+    });
+  }
 }
 
 // Hàm ẩn dropdown tìm kiếm và xóa text trong ô input
@@ -977,4 +1027,154 @@ document.getElementById("libraryModal")?.addEventListener("click", (e) => {
  */
 function moModalHoTro() {
   hienThiToast("🎧 Tổng đài viên DRX Store đang trực tuyến (24/7). Sẵn sàng hỗ trợ kích hoạt key game và bảo hành!", "success");
+}
+
+// =============================================================================
+// CỤM 11: TIỆN ÍCH CUỘN TRANG (SCROLL UTILITIES: PROGRESS BAR & BACK TO TOP)
+// =============================================================================
+function khoiTaoTienTrinhCuonTrang() {
+  // 1. Tạo & chèn HTML cho Scroll Progress Bar
+  if (!document.getElementById("scrollProgressBar")) {
+    const progContainer = document.createElement("div");
+    progContainer.className = "scroll-progress-container";
+    progContainer.innerHTML = `<div id="scrollProgressBar" class="scroll-progress-bar" style="position: fixed; top: 0; left: 0; height: 3px; background: var(--color-accent); z-index: 1100; transition: width 0.1s ease; width: 0%;"></div>`;
+    document.body.appendChild(progContainer);
+  }
+
+  // 2. Tạo & chèn HTML cho Nút Back-to-Top thông minh
+  if (!document.getElementById("backToTopBtn")) {
+    const btn = document.createElement("button");
+    btn.id = "backToTopBtn";
+    btn.className = "back-to-top-btn";
+    btn.setAttribute("aria-label", "Quay lại đầu trang");
+    btn.style.cssText = `
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 0;
+    `;
+    btn.innerHTML = `
+      <svg class="progress-ring" width="50" height="50" style="position: absolute; top: -1px; left: -1px; transform: rotate(-90deg);">
+        <circle class="progress-ring__circle-bg" stroke="rgba(255, 255, 255, 0.08)" stroke-width="3" fill="transparent" r="22" cx="25" cy="25"/>
+        <circle id="progressRingCircle" class="progress-ring__circle" stroke="var(--color-accent)" stroke-width="3" fill="transparent" r="22" cx="25" cy="25" style="stroke-dasharray: 138.23; stroke-dashoffset: 138.23; transition: stroke-dashoffset 0.1s;"/>
+      </svg>
+      <span class="arrow-icon" style="position: relative; z-index: 2; display: flex; align-items: center; justify-content: center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"></line>
+          <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+      </span>
+    `;
+    document.body.appendChild(btn);
+
+    // Thêm hover style bằng javascript
+    btn.addEventListener("mouseenter", () => {
+      btn.style.transform = "translateY(-3px)";
+      btn.style.background = "rgba(15, 23, 42, 0.95)";
+      btn.style.borderColor = "var(--color-accent)";
+    });
+    btn.addEventListener("mouseleave", () => {
+      btn.style.transform = "translateY(0)";
+      btn.style.background = "rgba(15, 23, 42, 0.8)";
+      btn.style.borderColor = "rgba(255, 255, 255, 0.1)";
+    });
+
+    // Sự kiện cuộn mượt lên đầu trang khi click
+    btn.addEventListener("click", () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+  }
+
+  const progressBar = document.getElementById("scrollProgressBar");
+  const backBtn = document.getElementById("backToTopBtn");
+  const circle = document.getElementById("progressRingCircle");
+  
+  if (!progressBar || !backBtn || !circle) return;
+
+  const circumference = 22 * 2 * Math.PI;
+
+  function capNhatTrangThaiCuon() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    
+    if (scrollHeight <= 0) return;
+
+    const scrollPercent = (scrollTop / scrollHeight) * 100;
+
+    // Cập nhật thanh tiến trình ngang
+    progressBar.style.width = `${scrollPercent}%`;
+
+    // Cập nhật viền tròn của nút Back-to-Top
+    const offset = circumference - (scrollPercent / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+
+    // Ẩn hiện nút Back-to-Top dựa trên vị trí cuộn (>400px)
+    if (scrollTop > 400) {
+      backBtn.style.opacity = "1";
+      backBtn.style.visibility = "visible";
+      backBtn.style.transform = "translateY(0)";
+    } else {
+      backBtn.style.opacity = "0";
+      backBtn.style.visibility = "hidden";
+      backBtn.style.transform = "translateY(10px)";
+    }
+  }
+
+  window.addEventListener("scroll", capNhatTrangThaiCuon, { passive: true });
+  window.addEventListener("resize", capNhatTrangThaiCuon, { passive: true });
+  
+  // Chạy thử ngay khi khởi tạo
+  capNhatTrangThaiCuon();
+}
+
+/**
+ * Hàm khởi tạo đồng hồ đếm ngược Flash Sale thời gian thực đến cuối ngày (23:59:59)
+ */
+function capNhatCountdownFlashSale() {
+  const hoursBox = document.getElementById("hoursBox");
+  const minutesBox = document.getElementById("minutesBox");
+  const secondsBox = document.getElementById("secondsBox");
+
+  if (!hoursBox || !minutesBox || !secondsBox) return;
+
+  function updates() {
+    const now = new Date();
+    const midnight = new Date();
+    midnight.setHours(23, 59, 59, 999);
+
+    let diff = midnight - now;
+    if (diff < 0) {
+      diff = 0;
+    }
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    hoursBox.textContent = String(hours).padStart(2, "0");
+    minutesBox.textContent = String(minutes).padStart(2, "0");
+    secondsBox.textContent = String(seconds).padStart(2, "0");
+  }
+
+  updates();
+  setInterval(updates, 1000);
 }
