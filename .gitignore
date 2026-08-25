@@ -1,6 +1,12 @@
-# Microsoft Word & Office temporary files
+# Microsoft Word & Office files
 ~$*
 *.tmp
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.pdf
+docx/
 
 # Operating System Files
 .DS_Store
