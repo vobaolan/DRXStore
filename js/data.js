@@ -29,7 +29,7 @@ const GAME_DATABASE = [
     banner:
       "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/553850/library_hero.jpg",
     cover:
-      "https://kamikey.com/wp-content/uploads/2026/04/helldivers_2_machinery_of_oppression.jpg",
+      "https://static0.polygonimages.com/wordpress/wp-content/uploads/sharedimages/2025/09/helldivers-2-tag-page-cover-art.jpg?q=50&fit=contain&w=480&dpr=1.5",
     screenshots: [
       "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/553850/aed08979e15f54798f287dd8820fb5838476b5fa/ss_aed08979e15f54798f287dd8820fb5838476b5fa.jpg",
       "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/553850/71ef7c65fcf63ff974ce42150190c0420c66c72b/ss_71ef7c65fcf63ff974ce42150190c0420c66c72b.jpg",
@@ -511,7 +511,7 @@ const GENRES_LIST = [
 
 // Danh sách mã giảm giá mẫu
 const VOUCHERS = {
-    DRXVIP: { discount: 10, desc: "Giảm 10% đặc biệt" },
+  DRXVIP: { discount: 10, desc: "Giảm 10% đặc biệt" },
   STEAM50: {
     discount: 50,
     desc: "Giảm 50% toàn bộ đơn hàng (Ưu đãi đặc biệt)",

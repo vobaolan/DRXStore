@@ -12,13 +12,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- CSS Stylesheets (Version 5.6 để tải mới font và layout không bị lưu cache cũ) -->
-  <link rel="stylesheet" href="css/variables.css?v=5.6">
-  <link rel="stylesheet" href="css/reset.css?v=5.6">
-  <link rel="stylesheet" href="css/components.css?v=5.6">
-  <link rel="stylesheet" href="css/layout.css?v=5.6">
-  <link rel="stylesheet" href="css/animations.css?v=5.6">
-  <link rel="stylesheet" href="css/responsive.css?v=5.6">
+  <!-- CSS Stylesheets (Version 6.0 để tải mới fix toàn diện Giỏ hàng và Modals) -->
+  <link rel="stylesheet" href="css/variables.css?v=6.0">
+  <link rel="stylesheet" href="css/reset.css?v=6.0">
+  <link rel="stylesheet" href="css/components.css?v=6.0">
+  <link rel="stylesheet" href="css/layout.css?v=6.0">
+  <link rel="stylesheet" href="css/animations.css?v=6.0">
+  <link rel="stylesheet" href="css/responsive.css?v=6.0">
 </head>
 <body>
 
@@ -48,24 +48,6 @@
 
       <!-- 1.3. Cụm Hành Động & Tài Khoản Người Dùng -->
       <div class="header-actions">
-        <!-- Nút liên kết Hỗ trợ Fanpage Facebook 24/7 (Gaming Headset Icon) -->
-        <a href="https://www.facebook.com/profile.php?id=61592954171872" target="_blank" rel="noopener noreferrer" class="header-action-btn header-support-btn" title="Hỗ trợ Fanpage Facebook 24/7" aria-label="Hỗ trợ Fanpage">
-          <svg width="21" height="21" viewBox="0 0 24 24" fill="none">
-            <defs>
-              <linearGradient id="headerHeadsetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#38BDF8"/>
-                <stop offset="100%" stop-color="#0052FF"/>
-              </linearGradient>
-            </defs>
-            <path d="M3 18V12C3 7.03 7.03 3 12 3C16.97 3 21 7.03 21 12V18" stroke="url(#headerHeadsetGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <rect x="2" y="11.5" width="4.5" height="8" rx="2.25" fill="url(#headerHeadsetGrad)" stroke="#BAE6FD" stroke-width="1.2"/>
-            <rect x="17.5" y="11.5" width="4.5" height="8" rx="2.25" fill="url(#headerHeadsetGrad)" stroke="#BAE6FD" stroke-width="1.2"/>
-            <path d="M20 18V19.5C20 21 18.8 22 17.5 22H13.5" stroke="url(#headerHeadsetGrad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="13" cy="22" r="1.3" fill="#0052FF"/>
-          </svg>
-          <span class="support-online-dot"></span>
-        </a>
-
         <!-- Nút mở thanh trượt giỏ hàng (Cart Drawer) -->
         <button class="header-action-btn" onclick="moCartDrawer()" title="Giỏ hàng" aria-label="Xem giỏ hàng">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
@@ -125,70 +107,89 @@
 
         <!-- 2.4. Dải 4 huy hiệu cam kết dịch vụ dạng viên thuốc kính mờ 1 hàng ngang cân đối -->
         <div class="hero-overlay-highlights">
-          <!-- 1. Giao Key 5s (Tia chớp vàng sắc nét) -->
-          <div class="hero-feature-capsule">
+          <!-- 1. Giao Key 5s (Tia chớp vàng 3D Flaticon) -->
+          <div class="hero-feature-capsule" title="Hệ thống tự động giao key 5s">
             <span class="capsule-icon-wrap icon-lightning">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
                 <defs>
-                  <linearGradient id="boltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#FDE047"/>
-                    <stop offset="100%" stop-color="#EA580C"/>
+                  <linearGradient id="boltGrad3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFF066"/>
+                    <stop offset="40%" stop-color="#FFB800"/>
+                    <stop offset="100%" stop-color="#FF7A00"/>
+                  </linearGradient>
+                  <linearGradient id="boltShine" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#FFFFFF"/>
+                    <stop offset="100%" stop-color="#FFE066"/>
                   </linearGradient>
                 </defs>
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="url(#boltGrad)" stroke="#FEF08A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14.5 1.5L3 13.5H11.5L10 22.5L21.5 10.5H13L14.5 1.5Z" fill="url(#boltGrad3D)" stroke="#FFD000" stroke-width="0.8" stroke-linejoin="round"/>
+                <path d="M14.5 1.5L11.5 13.5H9L12 1.5H14.5Z" fill="url(#boltShine)" opacity="0.75"/>
               </svg>
             </span>
             <span class="capsule-text">Giao Key 5s</span>
           </div>
 
-          <!-- 2. Bảo Hành 100% (Khiên lục bảo tích xanh) -->
-          <div class="hero-feature-capsule">
+          <!-- 2. Bảo Hành 100% (Khiên lục bảo 3D Flaticon) -->
+          <div class="hero-feature-capsule" title="Bảo hành trọn đời 100%">
             <span class="capsule-icon-wrap icon-shield">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
                 <defs>
-                  <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="shieldGrad3D" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stop-color="#34D399"/>
-                    <stop offset="100%" stop-color="#059669"/>
+                    <stop offset="45%" stop-color="#10B981"/>
+                    <stop offset="100%" stop-color="#047857"/>
+                  </linearGradient>
+                  <linearGradient id="shieldRimGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#A7F3D0"/>
+                    <stop offset="100%" stop-color="#065F46"/>
                   </linearGradient>
                 </defs>
-                <path d="M12 22S20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" fill="url(#shieldGrad)" stroke="#A7F3D0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M9 12L11 14L15 10" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 2L20 5.5V11.5C20 17.5 16.5 21.8 12 23C7.5 21.8 4 17.5 4 11.5V5.5L12 2Z" fill="url(#shieldGrad3D)" stroke="url(#shieldRimGrad)" stroke-width="1.2" stroke-linejoin="round"/>
+                <path d="M8.5 11.5L11 14L15.5 9.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
             <span class="capsule-text">Bảo Hành 100%</span>
           </div>
 
-          <!-- 3. Chiết Khấu Đến 90% (Thẻ giảm giá hồng ngọc) -->
-          <div class="hero-feature-capsule">
+          <!-- 3. Chiết Khấu Đến 90% (Thẻ giảm giá hồng ngọc 3D Flaticon) -->
+          <div class="hero-feature-capsule" title="Chiết khấu game bản quyền đến 90%">
             <span class="capsule-icon-wrap icon-discount">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
                 <defs>
-                  <linearGradient id="tagGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="discountGrad3D" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stop-color="#FB7185"/>
-                    <stop offset="100%" stop-color="#E11D48"/>
+                    <stop offset="45%" stop-color="#F43F5E"/>
+                    <stop offset="100%" stop-color="#BE123C"/>
+                  </linearGradient>
+                  <linearGradient id="tagRimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#FFE4E6"/>
+                    <stop offset="100%" stop-color="#9F1239"/>
                   </linearGradient>
                 </defs>
-                <path d="M20.59 13.41L13.42 20.58C13.04 20.96 12.53 21.17 12 21.17C11.47 21.17 10.96 20.96 10.58 20.58L2.41 12.41C2.04 12.04 1.83 11.53 1.83 11V3.17C1.83 2.52 2.35 2 3 2H10.83C11.36 2 11.87 2.21 12.25 2.59L20.59 10.93C21.37 11.71 21.37 12.63 20.59 13.41Z" fill="url(#tagGrad)" stroke="#FECDD3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="7" cy="7" r="1.75" fill="#FFFFFF"/>
+                <path d="M21 13.5L13.5 21C13 21.5 12.2 21.5 11.7 21L3 12.3V3H12.3L21 11.7C21.5 12.2 21.5 13 21 13.5Z" fill="url(#discountGrad3D)" stroke="url(#tagRimGrad)" stroke-width="1.1" stroke-linejoin="round"/>
+                <circle cx="7.5" cy="7.5" r="2" fill="#FFFFFF"/>
+                <path d="M11.5 15.5L16.5 10.5M12.5 11H12.51M15.5 15H15.51" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
             </span>
             <span class="capsule-text">Chiết Khấu Đến 90%</span>
           </div>
 
-          <!-- 4. Hỗ Trợ Kỹ Thuật 24/7 (Tai nghe tổng đài viên Cyan) -->
-          <div class="hero-feature-capsule">
+          <!-- 4. Hỗ Trợ Kỹ Thuật 24/7 (Tai nghe tổng đài viên Cyan 3D Flaticon) -->
+          <div class="hero-feature-capsule" title="Hỗ trợ kỹ thuật 24/7 qua chat">
             <span class="capsule-icon-wrap icon-support">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
                 <defs>
-                  <linearGradient id="headsetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <linearGradient id="supportGrad3D" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stop-color="#38BDF8"/>
-                    <stop offset="100%" stop-color="#0284C7"/>
+                    <stop offset="45%" stop-color="#0284C7"/>
+                    <stop offset="100%" stop-color="#0369A1"/>
                   </linearGradient>
                 </defs>
-                <path d="M3 18V12C3 7.03 7.03 3 12 3C16.97 3 21 7.03 21 12V18" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="2" y="13" width="4" height="7" rx="2" fill="url(#headsetGrad)" stroke="#BAE6FD" stroke-width="1.2"/>
-                <rect x="18" y="13" width="4" height="7" rx="2" fill="url(#headsetGrad)" stroke="#BAE6FD" stroke-width="1.2"/>
-                <path d="M20 18V19C20 20.65 18.65 22 17 22H14" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M3 13C3 8.03 7.03 4 12 4C16.97 4 21 8.03 21 13V18C21 19.65 19.65 21 18 21H17V13H20V13C20 8.58 16.42 5 12 5C7.58 5 4 8.58 4 13V13H7V21H6C4.35 21 3 19.65 3 18V13Z" fill="url(#supportGrad3D)"/>
+                <rect x="2.5" y="12.5" width="4.5" height="7" rx="2.25" fill="#38BDF8" stroke="#BAE6FD" stroke-width="1"/>
+                <rect x="17" y="12.5" width="4.5" height="7" rx="2.25" fill="#38BDF8" stroke="#BAE6FD" stroke-width="1"/>
+                <path d="M19 19V20C19 21.65 17.65 22.5 15.5 22.5H13" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round"/>
+                <circle cx="12" cy="22.5" r="1.5" fill="#00E5FF"/>
               </svg>
             </span>
             <span class="capsule-text">Hỗ Trợ Kỹ Thuật 24/7</span>
@@ -211,7 +212,7 @@
        ========================================================================= -->
   <section class="section-block" id="specialOffersSection">
     <div class="container">
-      <!-- Tiêu đề và nút xem thêm -->
+      <!-- Tiêu đề Flash Sale -->
       <div class="section-header-row">
         <div>
           <div class="section-badge badge-flash-sale">
@@ -225,10 +226,6 @@
           </div>
           <h2 class="section-headline">Key Game <span class="gradient-text">Giảm Giá Sốc</span> Hôm Nay</h2>
         </div>
-        <a href="javascript:void(0)" onclick="chuyenTabGame('under-500k')" class="btn btn-outline btn-md">
-          <span>Xem tất cả ưu đãi</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
       </div>
 
       <!-- Lưới 5 cột hiển thị thẻ game giảm giá do JavaScript render -->
@@ -291,6 +288,7 @@
        ========================================================================= -->
   <section class="section-block">
     <div class="container">
+      <!-- Tiêu đề Góc Game Indie -->
       <div class="section-header-row">
         <div>
           <div class="section-badge badge-indie mb-1">
@@ -304,10 +302,6 @@
           </div>
           <h2 class="section-headline">Góc Game Độc Quyền & <span class="gradient-text">Kiệt Tác Độc Lập</span></h2>
         </div>
-        <a href="javascript:void(0)" onclick="chuyenTabGame('top-rated')" class="btn btn-outline btn-md">
-          <span>Xem kho Indie</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
       </div>
 
       <!-- Lưới 5 cột hiển thị 5 thẻ game Indie hoàn chỉnh do JavaScript render -->
@@ -425,10 +419,6 @@
       <!-- Nút đóng modal -->
       <button class="modal-close-btn" onclick="dongModalAuth()">✕</button>
       <div class="auth-modal-content-wrap">
-        <div class="section-badge mb-2">
-          <span class="badge-dot"></span>
-          <span class="badge-text font-mono">ACCOUNT ACCESS</span>
-        </div>
         <h2 id="authModalTitle" class="auth-modal-title">Đăng Nhập DRX Store</h2>
 
         <!-- Nút chuyển tab Đăng nhập / Đăng ký -->
@@ -579,7 +569,7 @@
   
   <!-- Cửa sổ Thư viện Game (Library) -->
   <div id="libraryModal" class="modal-backdrop">
-    <div class="modal-dialog" style="max-width: 600px; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="modal-dialog" style="max-width: 600px; max-height: calc(100% - 60px); display: flex; flex-direction: column;">
       <button class="modal-close-btn" onclick="dongModalLibrary()" style="z-index: 10;">✕</button>
       <div style="padding: 24px 28px; border-bottom: 1px solid #E2E8F0; flex-shrink: 0;">
         <h2 style="font-size: 1.5rem; font-weight: 700; color: #0F172A; margin: 0;">🎮 Thư viện Game của bạn</h2>
@@ -591,11 +581,114 @@
     </div>
   </div>
 
+  <!-- Cửa sổ Quản lý Hồ sơ & Đổi mật khẩu (Profile & Password Modal) -->
+  <div id="profileModal" class="modal-backdrop">
+    <div class="modal-dialog auth-modal-dialog" style="max-width: 460px;">
+      <!-- Nút đóng modal -->
+      <button class="modal-close-btn" onclick="dongModalProfile()">✕</button>
+      <div class="auth-modal-content-wrap">
+        <h2 id="profileModalTitle" class="auth-modal-title">⚙️ Quản Lý Tài Khoản</h2>
+
+        <!-- Nút chuyển tab Thông tin / Đổi mật khẩu -->
+        <div class="auth-tabs-container mb-3">
+          <button id="tabBtnProfileInfo" class="auth-tab-btn active" onclick="chuyenTabProfile('profile')">Hồ sơ cá nhân</button>
+          <button id="tabBtnProfilePass" class="auth-tab-btn" onclick="chuyenTabProfile('password')">Đổi mật khẩu</button>
+        </div>
+
+        <!-- Tab 1: Cập nhật thông tin họ tên & email -->
+        <form id="formUpdateProfile" class="auth-form-pane" onsubmit="submitCapNhatHoSo(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label">Tên tài khoản (Không thể đổi)</label>
+            <input type="text" id="inputProfileUser" class="form-input" disabled style="background: #F1F5F9; color: #64748B; cursor: not-allowed;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Họ và tên</label>
+            <input type="text" id="inputProfileName" class="form-input" placeholder="Nhập họ và tên mới" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email liên hệ</label>
+            <input type="email" id="inputProfileEmail" class="form-input" placeholder="Nhập địa chỉ email" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" style="font-size: 0.75rem; color: #64748B;">Số dư ví hiện tại: <b id="profileWalletBalance" style="color: #2563EB;">0đ</b></label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-md auth-submit-btn">Lưu Thay Đổi</button>
+        </form>
+
+        <!-- Tab 2: Đổi mật khẩu -->
+        <form id="formChangePassword" class="auth-form-pane" onsubmit="submitDoiMatKhau(event)" style="display: none;" novalidate>
+          <div class="form-group">
+            <label class="form-label">Mật khẩu hiện tại</label>
+            <div class="password-input-wrap">
+              <input type="password" id="inputOldPass" class="form-input" placeholder="Nhập mật khẩu đang dùng" required>
+              <button type="button" class="btn-toggle-password" onclick="togglePassword('inputOldPass', this)">
+                <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mật khẩu mới (Ít nhất 6 ký tự)</label>
+            <div class="password-input-wrap">
+              <input type="password" id="inputNewPass" class="form-input" placeholder="Nhập mật khẩu mới" required>
+              <button type="button" class="btn-toggle-password" onclick="togglePassword('inputNewPass', this)">
+                <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Xác nhận mật khẩu mới</label>
+            <div class="password-input-wrap">
+              <input type="password" id="inputConfirmNewPass" class="form-input" placeholder="Nhập lại mật khẩu mới" required>
+              <button type="button" class="btn-toggle-password" onclick="togglePassword('inputConfirmNewPass', this)">
+                <svg class="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                <svg class="eye-off-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+              </button>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-md auth-submit-btn">Đổi Mật Khẩu</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       CỤM 13: BONG BÓNG CHAT NỔI HỖ TRỢ KHÁCH HÀNG (FLOATING CHAT - FACEBOOK & ZALO)
+       - Cố định ở góc dưới bên phải màn hình, xếp theo hàng dọc
+       - Facebook Messenger: dẫn link Fanpage Facebook 24/7
+       - Zalo: kênh hỗ trợ nhanh
+       ========================================================================= -->
+  <div class="floating-chat-container" id="floatingChatContainer">
+    <!-- Bong bóng Facebook Messenger -->
+    <a href="https://www.facebook.com/profile.php?id=61592954171872" target="_blank" rel="noopener noreferrer" class="floating-chat-bubble fb-bubble" title="Chat Facebook Messenger 24/7" aria-label="Chat Facebook Messenger">
+      <span class="chat-pulse-wave"></span>
+      <span class="chat-tooltip">Chat Facebook 24/7</span>
+      <div class="chat-icon-inner">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2C6.48 2 2 6.13 2 11.23C2 14.14 3.44 16.71 5.7 18.36V22L9.2 20.08C10.1 20.33 11.03 20.46 12 20.46C17.52 20.46 22 16.33 22 11.23C22 6.13 17.52 2 12 2ZM13.06 14.47L10.5 11.73L5.5 14.47L10.94 8.68L13.5 11.42L18.5 8.68L13.06 14.47Z" fill="#FFFFFF"/>
+        </svg>
+      </div>
+    </a>
+
+    <!-- Bong bóng Zalo Chat -->
+    <a href="https://zalo.me/0399224729" target="_blank" rel="noopener noreferrer" class="floating-chat-bubble zalo-bubble" title="Chat Zalo CSKH" aria-label="Chat Zalo">
+      <span class="chat-pulse-wave"></span>
+      <span class="chat-tooltip">Chat Zalo CSKH</span>
+      <div class="chat-icon-inner">
+        <svg width="28" height="28" viewBox="0 0 48 48" fill="none">
+          <path d="M24 4C12.95 4 4 12.24 4 22.4C4 28.2 6.8 33.36 11.2 36.68V44L18.12 40.2C20 40.6 21.96 40.8 24 40.8C35.05 40.8 44 32.56 44 22.4C44 12.24 35.05 4 24 4Z" fill="#0068FF"/>
+          <text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#FFFFFF" font-family="'Be Vietnam Pro', sans-serif" font-weight="900" font-size="13" letter-spacing="-0.5">Zalo</text>
+        </svg>
+      </div>
+    </a>
+  </div>
+
   <script src="js/data.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/cart.js"></script>
-  <script src="js/render.js?v=5.6"></script>
-  <script src="js/app.js?v=5.6"></script>
+  <script src="js/render.js?v=5.7"></script>
+  <script src="js/app.js?v=5.7"></script>
 </body>
 </html>

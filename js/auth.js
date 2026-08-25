@@ -140,6 +140,7 @@ function capNhatThanhHeaderUser() {
         <div class="user-dropdown-menu">
           <button onclick="napTienViVaThongBao()" class="dropdown-item btn-deposit">💳 Nạp +500.000đ vào ví</button>
           <button onclick="moModalLibrary()" class="dropdown-item" style="color: #10B981;">🎮 Thư viện Game</button>
+          <button onclick="moModalProfile('profile')" class="dropdown-item" style="color: #2563EB;">⚙️ Hồ sơ & Đổi mật khẩu</button>
           <hr class="dropdown-divider">
           <button onclick="dangXuatTaiKhoan()" class="dropdown-item text-danger">🚪 Đăng xuất</button>
         </div>
@@ -163,5 +164,93 @@ function napTienViVaThongBao() {
     }
     capNhatThanhHeaderUser();
   }
+}
+
+// =============================================================================
+// CỤM 7: CẬP NHẬT HỒ SƠ & ĐỔI MẬT KHẨU NGƯỜI DÙNG (PROFILE & PASSWORD UPDATE)
+// =============================================================================
+
+/**
+ * 7.1. Cập nhật thông tin họ tên và email
+ */
+function capNhatHoSo(hoTen, email) {
+  const currentUser = Storage.getCurrentUser();
+  if (!currentUser) {
+    return { success: false, message: "Bạn chưa đăng nhập!" };
+  }
+
+  if (!hoTen || !hoTen.trim()) {
+    return { success: false, message: "Vui lòng nhập họ và tên!" };
+  }
+
+  if (!email || !email.trim()) {
+    return { success: false, message: "Vui lòng nhập email!" };
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.trim())) {
+    return { success: false, message: "Định dạng email không hợp lệ!" };
+  }
+
+  // Cập nhật người dùng hiện tại
+  currentUser.hoTen = hoTen.trim();
+  currentUser.email = email.trim();
+  Storage.setCurrentUser(currentUser);
+
+  // Cập nhật trong danh sách toàn bộ users
+  const users = Storage.getUsers();
+  const index = users.findIndex(u => u.taiKhoan === currentUser.taiKhoan);
+  if (index !== -1) {
+    users[index].hoTen = currentUser.hoTen;
+    users[index].email = currentUser.email;
+    Storage.saveUsers(users);
+  }
+
+  capNhatThanhHeaderUser();
+  return { success: true, message: "Cập nhật thông tin hồ sơ thành công!" };
+}
+
+/**
+ * 7.2. Đổi mật khẩu tài khoản
+ */
+function doiMatKhau(matKhauCu, matKhauMoi, xacNhanMoi) {
+  const currentUser = Storage.getCurrentUser();
+  if (!currentUser) {
+    return { success: false, message: "Bạn chưa đăng nhập!" };
+  }
+
+  if (!matKhauCu) {
+    return { success: false, message: "Vui lòng nhập mật khẩu hiện tại!" };
+  }
+
+  if (currentUser.matKhau !== matKhauCu) {
+    return { success: false, message: "Mật khẩu hiện tại không chính xác!" };
+  }
+
+  if (!matKhauMoi || matKhauMoi.length < 6) {
+    return { success: false, message: "Mật khẩu mới phải có ít nhất 6 ký tự!" };
+  }
+
+  if (matKhauMoi === matKhauCu) {
+    return { success: false, message: "Mật khẩu mới không được trùng mật khẩu cũ!" };
+  }
+
+  if (matKhauMoi !== xacNhanMoi) {
+    return { success: false, message: "Xác nhận mật khẩu mới không trùng khớp!" };
+  }
+
+  // Cập nhật mật khẩu
+  currentUser.matKhau = matKhauMoi;
+  Storage.setCurrentUser(currentUser);
+
+  // Cập nhật trong danh sách toàn bộ users
+  const users = Storage.getUsers();
+  const index = users.findIndex(u => u.taiKhoan === currentUser.taiKhoan);
+  if (index !== -1) {
+    users[index].matKhau = matKhauMoi;
+    Storage.saveUsers(users);
+  }
+
+  return { success: true, message: "Đổi mật khẩu thành công!" };
 }
 

@@ -13,6 +13,7 @@
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  zoom: 0.8; /* Thu nhỏ 80% toàn diện ở cấp độ root HTML */
 }
 
 body {

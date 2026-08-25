@@ -383,12 +383,10 @@ function chuyenTabAuth(tab) {
     if (formLogin) {
       formLogin.style.display = "block";
       formLogin.style.opacity = "1";
-      formLogin.style.pointerEvents = "auto";
     }
     if (formRegister) {
       formRegister.style.display = "none";
       formRegister.style.opacity = "0";
-      formRegister.style.pointerEvents = "none";
     }
   } else {
     if (tabLogin) tabLogin.classList.remove("active");
@@ -397,12 +395,10 @@ function chuyenTabAuth(tab) {
     if (formLogin) {
       formLogin.style.display = "none";
       formLogin.style.opacity = "0";
-      formLogin.style.pointerEvents = "none";
     }
     if (formRegister) {
       formRegister.style.display = "block";
       formRegister.style.opacity = "1";
-      formRegister.style.pointerEvents = "auto";
     }
   }
 }
@@ -961,20 +957,138 @@ function renderLibrary() {
     </div>
   `).join("");
 }
+/**
+ * =============================================================================
+ * CỤM 14: QUẢN LÝ MODAL HỒ SƠ & ĐỔI MẬT KHẨU (PROFILE & CHANGE PASSWORD MODAL)
+ * =============================================================================
+ */
 
-// Add dismiss logic
+// 14.1. Mở Modal Hồ sơ
+function moModalProfile(tab = "profile") {
+  const currentUser = Storage.getCurrentUser();
+  if (!currentUser) {
+    moModalAuth("login");
+    return;
+  }
+
+  const modal = document.getElementById("profileModal");
+  if (!modal) return;
+
+  // Điền dữ liệu hiện tại của user vào Form
+  const inputUser = document.getElementById("inputProfileUser");
+  const inputName = document.getElementById("inputProfileName");
+  const inputEmail = document.getElementById("inputProfileEmail");
+  const walletBal = document.getElementById("profileWalletBalance");
+
+  if (inputUser) inputUser.value = currentUser.taiKhoan;
+  if (inputName) inputName.value = currentUser.hoTen || currentUser.taiKhoan;
+  if (inputEmail) inputEmail.value = currentUser.email || "";
+  if (walletBal) walletBal.textContent = (currentUser.walletBalance || 0).toLocaleString("vi-VN") + "đ";
+
+  // Reset form đổi mật khẩu
+  const formPass = document.getElementById("formChangePassword");
+  if (formPass) formPass.reset();
+
+  chuyenTabProfile(tab);
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+// 14.2. Đóng Modal Hồ sơ
+function dongModalProfile() {
+  const modal = document.getElementById("profileModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+  if (document.activeElement && typeof document.activeElement.blur === "function") {
+    document.activeElement.blur();
+  }
+}
+
+// 14.3. Chuyển đổi tab giữa Cập nhật thông tin và Đổi mật khẩu
+function chuyenTabProfile(tab) {
+  const tabInfo = document.getElementById("tabBtnProfileInfo");
+  const tabPass = document.getElementById("tabBtnProfilePass");
+  const formProfile = document.getElementById("formUpdateProfile");
+  const formPass = document.getElementById("formChangePassword");
+  const title = document.getElementById("profileModalTitle");
+
+  if (tab === "profile") {
+    if (tabInfo) tabInfo.classList.add("active");
+    if (tabPass) tabPass.classList.remove("active");
+    if (title) title.textContent = "⚙️ Quản Lý Hồ Sơ Cá Nhân";
+    if (formProfile) formProfile.style.display = "block";
+    if (formPass) formPass.style.display = "none";
+  } else {
+    if (tabInfo) tabInfo.classList.remove("active");
+    if (tabPass) tabPass.classList.add("active");
+    if (title) title.textContent = "🔒 Đổi Mật Khẩu Tài Khoản";
+    if (formProfile) formProfile.style.display = "none";
+    if (formPass) formPass.style.display = "block";
+  }
+}
+
+// 14.4. Submit form cập nhật hồ sơ
+function submitCapNhatHoSo(e) {
+  e.preventDefault();
+  const hoTen = document.getElementById("inputProfileName").value.trim();
+  const email = document.getElementById("inputProfileEmail").value.trim();
+
+  const result = capNhatHoSo(hoTen, email);
+  if (result.success) {
+    showToast(result.message, "success");
+    dongModalProfile();
+  } else {
+    showToast(result.message, "error");
+  }
+}
+
+// 14.5. Submit form đổi mật khẩu
+function submitDoiMatKhau(e) {
+  e.preventDefault();
+  const oldPass = document.getElementById("inputOldPass").value;
+  const newPass = document.getElementById("inputNewPass").value;
+  const confirmNewPass = document.getElementById("inputConfirmNewPass").value;
+
+  const result = doiMatKhau(oldPass, newPass, confirmNewPass);
+  if (result.success) {
+    showToast(result.message, "success");
+    dongModalProfile();
+  } else {
+    showToast(result.message, "error");
+  }
+}
+
+// Lắng nghe sự kiện đóng modal profile & library
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") {
+    dongModalProfile();
     dongModalLibrary();
   }
+});
+document.getElementById("profileModal")?.addEventListener("click", (e) => {
+  if (e.target.id === "profileModal") dongModalProfile();
 });
 document.getElementById("libraryModal")?.addEventListener("click", (e) => {
   if (e.target.id === "libraryModal") dongModalLibrary();
 });
 
 /**
- * Hàm mở hộp thoại hoặc thông báo Hỗ trợ Kỹ thuật 24/7
+ * Hàm cuộn mượt tới khu vực Flash Sale & Ưu Đãi Giảm Giá
  */
-function moModalHoTro() {
-  hienThiToast("🎧 Tổng đài viên DRX Store đang trực tuyến (24/7). Sẵn sàng hỗ trợ kích hoạt key game và bảo hành!", "success");
+function cuonToiFlashSale() {
+  const section = document.getElementById("specialOffersSection");
+  if (section) {
+    const headerOffset = 96;
+    const elementPosition = section.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth"
+    });
+  }
 }
+
+
+

@@ -759,22 +759,27 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(15, 23, 42, 0.65);
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity var(--transition-normal);
+  transition: opacity var(--transition-normal), visibility var(--transition-normal);
   padding: 20px;
 }
 
 .modal-backdrop.active {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
@@ -784,7 +789,7 @@
   border-radius: 20px;
   max-width: 1020px;
   width: 92%;
-  max-height: 90vh;
+  max-height: calc(100% - 40px);
   overflow-y: auto;
   box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
   transform: scale(0.95) translateY(10px);
@@ -1404,21 +1409,6 @@
   letter-spacing: -0.02em;
 }
 
-#authModal .section-badge {
-  background-color: #EFF6FF;
-  border-color: #BFDBFE;
-  padding: 4px 10px;
-  font-size: 0.6875rem;
-}
-
-#authModal .badge-text {
-  color: #2563EB;
-}
-
-#authModal .badge-dot {
-  background-color: #2563EB;
-}
-
 .auth-tabs-container {
   display: flex;
   gap: 6px;
@@ -1566,4 +1556,163 @@
 }
 #authModal .modal-dialog::-webkit-scrollbar {
   display: none;
+}
+
+/* ==========================================================================
+   14. BONG BÓNG CHAT NỔI GÓC PHẢI (FLOATING CHAT BUBBLES - FACEBOOK & ZALO)
+   - Cố định ở góc dưới bên phải màn hình (Fixed Bottom-Right)
+   - Xếp theo hàng dọc (Vertical Stack: Facebook Messenger & Zalo)
+   - Hiệu ứng phát sáng lượn sóng (Pulse Wave), Tooltip kính mờ và tương tác mượt mà
+   ========================================================================== */
+.floating-chat-container {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 995;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-end;
+}
+
+.floating-chat-bubble {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.floating-chat-bubble:hover {
+  transform: scale(1.12) translateY(-3px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+.floating-chat-bubble:active {
+  transform: scale(0.96);
+}
+
+/* Facebook Messenger Bubble */
+.fb-bubble {
+  background: linear-gradient(135deg, #00B2FF 0%, #006AFF 50%, #0052FF 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.fb-bubble:hover {
+  box-shadow: 0 10px 28px rgba(0, 106, 255, 0.55), 0 0 18px rgba(0, 178, 255, 0.4);
+}
+
+/* Zalo Bubble */
+.zalo-bubble {
+  background: linear-gradient(135deg, #0088FF 0%, #0068FF 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+}
+
+.zalo-bubble:hover {
+  box-shadow: 0 10px 28px rgba(0, 104, 255, 0.55), 0 0 18px rgba(56, 189, 248, 0.4);
+}
+
+.chat-icon-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  transition: transform 0.3s ease;
+}
+
+.floating-chat-bubble:hover .chat-icon-inner {
+  transform: scale(1.08);
+}
+
+/* Sóng lan tỏa (Pulse Wave Animation) */
+.chat-pulse-wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.fb-bubble .chat-pulse-wave {
+  background: rgba(0, 178, 255, 0.45);
+  animation: chatWave 2.2s infinite ease-out;
+}
+
+.zalo-bubble .chat-pulse-wave {
+  background: rgba(0, 104, 255, 0.45);
+  animation: chatWave 2.2s infinite ease-out 1.1s;
+}
+
+@keyframes chatWave {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.55);
+    opacity: 0;
+  }
+}
+
+/* Tooltip Chữ Kính Mờ Trượt Từ Trái Sang */
+.chat-tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FFFFFF;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-primary);
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chat-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -5px;
+  transform: translateY(-50%);
+  border-width: 5px 0 5px 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(15, 23, 42, 0.88);
+}
+
+.floating-chat-bubble:hover .chat-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+@media (max-width: 768px) {
+  .floating-chat-container {
+    bottom: 20px;
+    right: 16px;
+    gap: 10px;
+  }
+  .floating-chat-bubble {
+    width: 46px;
+    height: 46px;
+  }
 }
