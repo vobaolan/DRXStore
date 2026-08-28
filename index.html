@@ -215,14 +215,24 @@
       <!-- Tiêu đề Flash Sale -->
       <div class="section-header-row">
         <div>
-          <div class="section-badge badge-flash-sale">
-            <span class="badge-icon-wrap icon-lava-bolt">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F59E0B" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </span>
-            <span class="badge-dot"></span>
-            <span class="badge-text font-mono">FLASH SALE GIÁ SỐC</span>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap;">
+            <div class="section-badge badge-flash-sale" style="margin-bottom: 0;">
+              <span class="badge-icon-wrap icon-lava-bolt">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                  <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" fill="#F59E0B" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <span class="badge-dot"></span>
+              <span class="badge-text font-mono">FLASH SALE GIÁ SỐC</span>
+            </div>
+            <div class="flash-sale-countdown" id="flashSaleCountdown">
+              <span class="countdown-label">Kết thúc sau</span>
+              <span class="countdown-box" id="hoursBox">00</span>
+              <span class="countdown-colon">:</span>
+              <span class="countdown-box" id="minutesBox">00</span>
+              <span class="countdown-colon">:</span>
+              <span class="countdown-box" id="secondsBox">00</span>
+            </div>
           </div>
           <h2 class="section-headline">Key Game <span class="gradient-text">Giảm Giá Sốc</span> Hôm Nay</h2>
         </div>
@@ -266,15 +276,30 @@
         </div>
       </div>
 
-      <!-- Thanh nút bấm lọc nhanh theo thể loại game -->
-      <div class="flex items-center gap-2 mb-4" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px;">
-        <span class="filter-genre-pill active" data-genre="Tất cả">Tất cả thể loại</span>
-        <span class="filter-genre-pill" data-genre="Hành động">Hành động</span>
-        <span class="filter-genre-pill" data-genre="RPG">RPG</span>
-        <span class="filter-genre-pill" data-genre="Souls-like">Souls-like</span>
-        <span class="filter-genre-pill" data-genre="Thế giới mở">Thế giới mở</span>
-        <span class="filter-genre-pill" data-genre="Indie">Indie</span>
-        <span class="filter-genre-pill" data-genre="Co-op">Co-op</span>
+      <!-- Hàng lọc thể loại & Sắp xếp game đa tiêu chí -->
+      <div class="filter-sort-row" style="display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;">
+        <!-- Thanh nút bấm lọc nhanh theo thể loại game -->
+        <div class="genre-pills-container" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="filter-genre-pill active" data-genre="Tất cả">Tất cả thể loại</span>
+          <span class="filter-genre-pill" data-genre="Hành động">Hành động</span>
+          <span class="filter-genre-pill" data-genre="RPG">RPG</span>
+          <span class="filter-genre-pill" data-genre="Souls-like">Souls-like</span>
+          <span class="filter-genre-pill" data-genre="Thế giới mở">Thế giới mở</span>
+          <span class="filter-genre-pill" data-genre="Indie">Indie</span>
+          <span class="filter-genre-pill" data-genre="Co-op">Co-op</span>
+        </div>
+
+        <!-- Dropdown sắp xếp game đa tiêu chí -->
+        <div class="sort-dropdown-wrapper" style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--bg-surface); min-height: 38px;">
+          <label for="gameSortSelect" class="sort-label" style="font-family: var(--font-body); font-size: 0.85rem; font-weight: 700; color: var(--color-foreground-muted); text-transform: uppercase; letter-spacing: 0.5px; margin: 0;">Sắp xếp:</label>
+          <select id="gameSortSelect" class="sort-select" style="border: none; background: transparent; font-family: var(--font-body); font-size: 0.875rem; font-weight: 600; color: var(--color-foreground); cursor: pointer; outline: none;">
+            <option value="default">Mặc định</option>
+            <option value="price-asc">Giá tăng dần 📈</option>
+            <option value="price-desc">Giá giảm dần 📉</option>
+            <option value="best-selling">Bán chạy nhất 🔥</option>
+            <option value="name-asc">Tên A-Z 🔠</option>
+          </select>
+        </div>
       </div>
 
       <!-- Lưới 5 cột hiển thị thẻ game theo tab do JavaScript render -->
